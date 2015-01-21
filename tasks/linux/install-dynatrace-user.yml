@@ -1,0 +1,4 @@
+---
+- name: Install system user 'dynatrace'
+  user: name=dynatrace comment='Dynatrace user' system=yes
+  sudo: yes

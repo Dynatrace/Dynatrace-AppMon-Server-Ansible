@@ -1,0 +1,71 @@
+---
+- name: Clean up inconcistent usage of bash variables
+  replace: dest="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" regexp='\$\{DT_HOME\}/\$\{DT_BINARY\}' replace='$DT_HOME/$DT_BINARY'
+  with_items:
+    - dynaTraceCollector
+    - dynaTraceBackendServer
+    - dynaTraceFrontendServer
+    - dynaTraceServer
+  sudo: yes
+
+- name: Clean up inconcistent usage of bash variables, pt.2
+  replace: dest="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" regexp='\$\{DT_HOME\}/\$\{DT_FE_BINARY\}' replace='$DT_HOME/$DT_FE_BINARY'
+  with_items:
+    - dynaTraceCollector
+    - dynaTraceBackendServer
+    - dynaTraceFrontendServer
+    - dynaTraceServer
+  sudo: yes
+
+- name: Assert that Dynatrace services are executed as user 'dynatrace'
+  replace: dest="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" regexp='^(\s+)(\$DT_HOME/\$DT_(FE_)?BINARY .*)' replace="\1su - dynatrace -c \"\2\""
+  with_items:
+    - dynaTraceCollector
+    - dynaTraceBackendServer
+    - dynaTraceFrontendServer
+    - dynaTraceServer
+  sudo: yes
+
+- name: Assert that the Dynatrace Web Server Agent is executed as user 'dynatrace'
+  replace: dest="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" regexp='^(\s+)(nohup \$DT_BINARY_WITH_PATH .*)' replace="\1su - dynatrace -c \"\2\""
+  with_items:
+    - dynaTraceWebServerAgent
+  sudo: yes
+
+- name: Assert that the Dynatrace Web Server Agent is executed as user 'dynatrace', pt.2
+  replace: dest="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" regexp='^(\s+)(echo \$! .*)' replace="\1su - dynatrace -c \"\2\""
+  with_items:
+    - dynaTraceWebServerAgent
+  sudo: yes
+
+- name: Rewrite the Default-Start LSB directive in Dynatrace's init.d scripts so that services start at correct run levels
+  replace: dest="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" regexp='(\# Default-Start:).*' replace='\1 2 3 4 5'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' # Assumes that runlevel 3 is "multi-user with networking"
+  with_items:
+    - dynaTraceCollector
+    - dynaTraceBackendServer
+    - dynaTraceFrontendServer
+    - dynaTraceServer
+    - dynaTraceWebServerAgent
+  sudo: yes
+
+- name: Rewrite the Default-Stop comment in Dynatrace's init.d scripts so that services stop at correct run levels
+  replace: dest="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" regexp='(\# Default-Stop:).*' replace='\1 0 1 6'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' # Assumes that runlevel 3 is "multi-user with networking"
+  with_items:
+    - dynaTraceCollector
+    - dynaTraceBackendServer
+    - dynaTraceFrontendServer
+    - dynaTraceServer
+    - dynaTraceWebServerAgent
+  sudo: yes
+
+- name: Make the Dynatrace services' init.d scripts available in /etc/init.d
+  file: src="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" dest="/etc/init.d/{{ item }}" state=link
+  with_items:
+    - dynaTraceCollector
+    - dynaTraceBackendServer
+    - dynaTraceFrontendServer
+    - dynaTraceServer
+    - dynaTraceWebServerAgent
+  sudo: yes

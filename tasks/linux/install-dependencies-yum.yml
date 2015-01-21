@@ -1,0 +1,24 @@
+---
+- name: Check if 'curl' is on the PATH
+  shell: which curl
+  sudo: yes
+  ignore_errors: yes
+  register: which_curl_cmd
+
+- name: Install package 'curl'
+  yum: pkg=curl state=present
+  register: curl_installed
+  when: which_curl_cmd.rc != 0
+  sudo: yes
+
+- name: Check if 'java' is on the PATH
+  shell: which java
+  sudo: yes
+  ignore_errors: yes
+  register: which_java_cmd
+
+- name: Install package 'java-1.7.0-openjdk'
+  yum: pkg=java-1.7.0-openjdk state=present
+  register: java_installed
+  when: which_java_cmd.rc != 0
+  sudo: yes

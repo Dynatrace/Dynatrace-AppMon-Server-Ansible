@@ -1,0 +1,12 @@
+---
+dynatrace_server_linux_install_dir: /opt
+dynatrace_server_linux_installer_file_name: dynatrace.jar
+dynatrace_server_linux_service_names: [dynaTraceServer]
+
+dynatrace_server_fixpack_file_name: dynatrace-fixpack.dtf
+dynatrace_server_license_file_name: dynatrace-license.key
+
+dynatrace_server_role_name: Dynatrace-Server
+
+# Do not change anything below unless you know what you are doing!
+

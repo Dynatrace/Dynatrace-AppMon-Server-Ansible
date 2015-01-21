@@ -1,0 +1,1 @@
+dynatrace_server_collector_host: "{{ lookup('env','DYNATRACE_COLLECTOR_HOST') | default('localhost', true) }}"

@@ -1,0 +1,49 @@
+---
+- name: Copy the Dynatrace installer to {{ dynatrace_server_linux_install_dir }}
+  copy: src="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }}" dest="{{ dynatrace_server_linux_install_dir }}"
+  sudo: yes
+
+- name: Stop and disable running Dynatrace services
+  service: name='{{ item }}' state=stopped enabled=no
+  with_items: dynatrace_server_linux_service_names
+  sudo: yes
+  ignore_errors: yes
+
+- name: Sleep for 5 seconds...
+  pause: seconds=5
+
+- name: Install Dynatrace
+  shell: yes | java -jar {{ dynatrace_server_linux_installer_file_name }} chdir={{ dynatrace_server_linux_install_dir }}
+  sudo: yes
+
+- name: Gather the name of the Dynatrace version installation directory
+  shell: find . -maxdepth 1 -name dynatrace-\* -type d -printf '%T@ %p\n' | sort -k 1nr | cut -d' ' -f2 | head -1 chdir={{ dynatrace_server_linux_install_dir }}
+  register: dynatrace_server_installed_version_dir
+  sudo: yes
+
+- name: Change ownership of the installation directory
+  file: path={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} owner=dynatrace group=dynatrace state=directory recurse=yes
+  sudo: yes
+
+- name: Change mode of the installation directory
+  file: path={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} mode=0700
+  sudo: yes
+
+- name: Create a symlink of the actual installation directory to {{ dynatrace_server_linux_install_dir }}/dynatrace
+  file: src={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} dest={{ dynatrace_server_linux_install_dir }}/dynatrace owner=dynatrace group=dynatrace mode=0700 state=link
+  sudo: yes
+
+- name: Remove the Dynatrace installer
+  file: path="{{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_linux_installer_file_name }}" state=absent
+  sudo: yes
+
+- include: install-dynatrace-server-initd-scripts.yml
+
+- name: Configure the Dynatrace Collector host in the Dynatrace Web Server Agent's dtwsagent.ini' file
+  lineinfile: dest={{ dynatrace_server_linux_install_dir }}/dynatrace/agent/conf/dtwsagent.ini regexp='^Server .*' line='Server {{ dynatrace_server_collector_host }}'
+  sudo: yes
+
+- name: Enable and start Dynatrace services
+  service: name='{{ item }}' state=restarted sleep=5 enabled=yes
+  with_items: dynatrace_server_linux_service_names
+  sudo: yes
