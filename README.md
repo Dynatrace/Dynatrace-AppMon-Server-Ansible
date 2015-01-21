@@ -8,7 +8,7 @@ An [Ansible](http://www.ansible.com) role for automated deployments of the [Dyna
 
 The role is available via:
 
-- [Ansible Galaxy](https://galaxy.ansible.com/list#/roles/)
+- [Ansible Galaxy](https://galaxy.ansible.com/list#/roles/2623)
 - [GitHub](https://github.com/Dynatrace/Dynatrace-Server-Ansible)
 
 ## Requirements
