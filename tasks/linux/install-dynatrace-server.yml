@@ -26,11 +26,11 @@
   sudo: yes
 
 - name: Change mode of the installation directory
-  file: path={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} mode=0700
+  file: path={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} mode=0755
   sudo: yes
 
 - name: Create a symlink of the actual installation directory to {{ dynatrace_server_linux_install_dir }}/dynatrace
-  file: src={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} dest={{ dynatrace_server_linux_install_dir }}/dynatrace owner=dynatrace group=dynatrace mode=0700 state=link
+  file: src={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} dest={{ dynatrace_server_linux_install_dir }}/dynatrace owner=dynatrace group=dynatrace mode=0755 state=link
   sudo: yes
 
 - name: Remove the Dynatrace installer
