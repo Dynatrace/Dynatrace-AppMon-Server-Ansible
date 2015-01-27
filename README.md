@@ -15,7 +15,7 @@ The role is available via:
 
 Download the Dynatrace (full) installer from [downloads.compuwareapm.com](http://downloads.compuwareapm.com) and place the artifact as ```dynatrace.jar``` in the role's ```files``` directory from where it will be picked up during the automated installation.
 
-Optionally, you can place a license key file at ```files/dtlicense.key``` and a fix pack installer at ```files/dynatrace.dtf```.
+Optionally, you can place a license key file at ```files/dynatrace-license.key``` and a Fixpack installer at ```files/dynatrace-fixpack.dtf```.
 
 ## Role Variables
 
