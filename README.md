@@ -37,6 +37,7 @@ As defined in ````vars/main.yml```:
 | Name                                        | Default    | Description                                                                               |
 |---------------------------------------------|------------|-------------------------------------------------------------------------------------------|
 | *DYNATRACE_COLLECTOR_HOST*                  | localhost  | The location of the collector the Web Server Agent service (if enabled) shall connect to. |
+| *DYNATRACE_WSAGENT_NAME*                    | dtwsagent  | The name the Web Server Agent as it appears in Dynatrace. |
 
 ## Example Playbook
 

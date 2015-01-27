@@ -1,1 +1,2 @@
 dynatrace_server_collector_host: "{{ lookup('env','DYNATRACE_COLLECTOR_HOST') | default('localhost', true) }}"
+dynatrace_server_wsagent_name: "{{ lookup('env','DYNATRACE_WSAGENT_NAME') | default('dtwsagent', true) }}"
