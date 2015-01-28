@@ -27,7 +27,7 @@ As defined in ```defaults/main.yml```:
 | *dynatrace_server_linux_installer_file_name* | dynatrace.jar         | The file name of the Dynatrace installer in the role's ```files``` directory. |
 | *dynatrace_server_linux_service_names*       | [dynaTraceServer]     | The full installer installs the Dynatrace Server, Collector and Agents. However, by default only ```dynaTraceServer``` will run as a service. You can control which services shall be made available upon startup by specifying any of ```dynaTraceServer```, ```dynaTraceCollector``` or ```dynaTraceWebServerAgent``` in this list, as seen in the example below. |
 | *dynatrace_server_fixpack_file_name*         | dynatrace-fixpack.dtf | The file name of the Dynatrace Fixpack in the role's ```files``` directory. |
-| *dynatrace_server_license_file_name*         | dynatrace-license.dtf | The file name of the Dynatrace License in the role's ```files``` directory. |
+| *dynatrace_server_license_file_name*         | dynatrace-license.key | The file name of the Dynatrace License in the role's ```files``` directory. |
 | *dynatrace_server_role_name*                 | Dynatrace-Server      | The actual name of this role in an [Ansible Playbook's](http://docs.ansible.com/playbooks.html) ```roles``` directory. |
 
 ## Environment Variables
