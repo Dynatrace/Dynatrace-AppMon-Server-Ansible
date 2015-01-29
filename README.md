@@ -28,16 +28,9 @@ As defined in ```defaults/main.yml```:
 | *dynatrace_server_linux_service_names*       | [dynaTraceServer]     | The full installer installs the Dynatrace Server, Collector and Agents. However, by default only ```dynaTraceServer``` will run as a service. You can control which services shall be made available upon startup by specifying any of ```dynaTraceServer```, ```dynaTraceCollector``` or ```dynaTraceWebServerAgent``` in this list, as seen in the example below. |
 | *dynatrace_server_fixpack_file_name*         | dynatrace-fixpack.dtf | The file name of the Dynatrace Fixpack in the role's ```files``` directory. |
 | *dynatrace_server_license_file_name*         | dynatrace-license.key | The file name of the Dynatrace License in the role's ```files``` directory. |
+| *dynatrace_server_wsagent_collector_host*    | localhost             | The location of the collector the Web Server Agent service (if enabled via *$dynatrace_server_linux_service_names*) shall connect to. |
+| *dynatrace_server_wsagent_name*              | dtwsagent             | The name the Web Server Agent as it appears in Dynatrace (if enabled via *$dynatrace_server_linux_service_names*). |
 | *dynatrace_server_role_name*                 | Dynatrace-Server      | The actual name of this role in an [Ansible Playbook's](http://docs.ansible.com/playbooks.html) ```roles``` directory. |
-
-## Environment Variables
-
-As defined in ````vars/main.yml```:
-
-| Name                                        | Default    | Description                                                                               |
-|---------------------------------------------|------------|-------------------------------------------------------------------------------------------|
-| *DYNATRACE_COLLECTOR_HOST*                  | localhost  | The location of the collector the Web Server Agent service (if enabled) shall connect to. |
-| *DYNATRACE_WSAGENT_NAME*                    | dtwsagent  | The name the Web Server Agent as it appears in Dynatrace. |
 
 ## Example Playbook
 
