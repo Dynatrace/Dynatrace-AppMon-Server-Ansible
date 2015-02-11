@@ -44,7 +44,7 @@
   sudo: yes
 
 - name: Configure the Dynatrace Collector host in the Dynatrace Web Server Agent's dtwsagent.ini' file
-  lineinfile: dest={{ dynatrace_server_linux_install_dir }}/dynatrace/agent/conf/dtwsagent.ini regexp='^Server .*' line='Server {{ dynatrace_server_wsagent_collector_host }}'
+  lineinfile: dest={{ dynatrace_server_linux_install_dir }}/dynatrace/agent/conf/dtwsagent.ini regexp='^Server .*' line='Server {{ dynatrace_server_wsagent_collector_hostname }}:{{ dynatrace_server_wsagent_collector_port }}'
   sudo: yes
 
 - name: Enable and start Dynatrace services
