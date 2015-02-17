@@ -7,7 +7,7 @@
 
 - name: Install package 'curl'
   yum: pkg=curl state=present
-  register: curl_installed
+  register: curl_install
   when: which_curl_cmd.rc != 0
   sudo: yes
 
@@ -19,6 +19,6 @@
 
 - name: Install package 'java-1.7.0-openjdk'
   yum: pkg=java-1.7.0-openjdk state=present
-  register: java_installed
+  register: java_install
   when: which_java_cmd.rc != 0
   sudo: yes

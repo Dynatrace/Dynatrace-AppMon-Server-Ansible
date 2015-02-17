@@ -11,7 +11,7 @@
 
 - name: Install package 'curl'
   apt: pkg=curl state=present
-  register: curl_installed
+  register: curl_install
   when: which_curl_cmd.rc != 0
   sudo: yes
 
@@ -23,6 +23,6 @@
 
 - name: Install package 'default-jre'
   apt: pkg=default-jre state=present
-  register: java_installed
+  register: java_install
   when: which_java_cmd.rc != 0
   sudo: yes
