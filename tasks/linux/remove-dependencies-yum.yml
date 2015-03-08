@@ -1,12 +1,12 @@
 ---
 - name: Remove package 'curl'
   yum: name=curl state=absent
-  when: curl_installed|success
+  when: not curl_install|skipped
   ignore_errors: yes
   sudo: yes
 
 - name: Remove package 'java-1.7.0-openjdk'
   yum: pkg=java-1.7.0-openjdk state=absent
-  when: java_installed|success
+  when: not java_install|skipped
   ignore_errors: yes
   sudo: yes
