@@ -23,7 +23,7 @@ As defined in ```defaults/main.yml```:
 
 | Name                                          | Default               | Description |
 |-----------------------------------------------|-----------------------|-------------|
-| *dynatrace_server_linux_install_dir*          | /opt                  | The Dynatrace Server will be installed into the directory *$dynatrace_agents_linux_install_dir*/dynatrace-*$major*-*$minor*-*$rev*, where *$major*, *$minor* and *$rev* are given by the installer. A symbolic link to the actual installation directory will be created in *$dynatrace_collector_linux_install_dir*/dynatrace. |
+| *dynatrace_server_linux_install_dir*          | /opt                  | The Dynatrace Server will be installed into the directory *$dynatrace_server_linux_install_dir*/dynatrace-*$major*-*$minor*-*$rev*, where *$major*, *$minor* and *$rev* are given by the installer. A symbolic link to the actual installation directory will be created in *$dynatrace_server_linux_install_dir*/dynatrace. |
 | *dynatrace_server_linux_installer_file_name*  | dynatrace.jar         | The file name of the Dynatrace installer in the role's ```files``` directory. |
 | *dynatrace_server_linux_service_names*        | [dynaTraceServer]     | The full installer installs the Dynatrace Server, Collector and Agents. However, by default only ```dynaTraceServer``` will run as a service. You can control which services shall be made available upon startup by specifying any of ```dynaTraceServer```, ```dynaTraceCollector``` or ```dynaTraceWebServerAgent``` in this list, as seen in the example below. |
 | *dynatrace_server_fixpack_file_name*          | dynatrace-fixpack.dtf | The file name of the Dynatrace Fixpack in the role's ```files``` directory. |
