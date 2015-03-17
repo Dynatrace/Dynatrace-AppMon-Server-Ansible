@@ -15,6 +15,6 @@ dynatrace_server_wsagent_name: dtwsagent
 dynatrace_server_wsagent_collector_hostname: localhost
 dynatrace_server_wsagent_collector_port: 9998
 
-dynatrace_server_role_name: Dynatrace-Server
+dynatrace_server_role_name: dynatrace.Dynatrace-Server
 
 # Do not change anything below unless you know what you are doing!
