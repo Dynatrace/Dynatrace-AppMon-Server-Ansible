@@ -84,10 +84,5 @@
 
 - name: Make the Dynatrace services' init.d scripts available in /etc/init.d
   file: src="{{ dynatrace_server_linux_install_dir }}/dynatrace/init.d/{{ item }}" dest="/etc/init.d/{{ item }}" state=link
-  with_items:
-    - dynaTraceCollector
-    - dynaTraceBackendServer
-    - dynaTraceFrontendServer
-    - dynaTraceServer
-    - dynaTraceWebServerAgent
+  with_items: dynatrace_server_linux_service_names
   sudo: yes
