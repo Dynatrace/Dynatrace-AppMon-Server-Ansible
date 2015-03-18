@@ -1,4 +1,14 @@
 ---
+- name: Create the installation directory {{ dynatrace_server_linux_install_dir }}
+  file: path="{{ dynatrace_server_linux_install_dir }}" state=directory
+  register: dynatrace_server_create_install_dir_result
+  sudo: yes
+
+- name: Change ownership of the installation directory if it had to be created
+  file: path="{{ dynatrace_server_linux_install_dir }}" owner=dynatrace group=dynatrace
+  when: dynatrace_server_create_install_dir_result|changed
+  sudo: yes
+
 - name: Copy the Dynatrace installer to {{ dynatrace_server_linux_install_dir }}
   copy: src="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }}" dest="{{ dynatrace_server_linux_install_dir }}"
   sudo: yes
