@@ -34,6 +34,9 @@
 - include: linux/install-dynatrace-fixpack.yml
   when: dynatrace_fixpack_provided.stat.exists
 
+- include: install-dynatrace-pwh-connection.yml
+  when: dynatrace_server_do_pwh_connection
+
 - include: linux/remove-dependencies-apt.yml
   when: dynatrace_server_installer_provided.stat.exists and ansible_pkg_mgr == "apt"
 - include: linux/remove-dependencies-yum.yml

@@ -61,3 +61,10 @@
   service: name='{{ item }}' state=restarted sleep=5 enabled=yes
   with_items: dynatrace_server_linux_service_names
   sudo: yes
+
+- name: Wait for the Dynatrace Server to become available via port 8020
+  wait_for: port=8020 state=present
+  sudo: yes
+
+- name: Sleep for 5 seconds...
+  pause: seconds=5
