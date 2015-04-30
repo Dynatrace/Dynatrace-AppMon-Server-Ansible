@@ -1,0 +1,22 @@
+---
+- name: Wait for the Dynatrace Server to become available via port 8020
+  wait_for: port=8020 state=present
+  sudo: yes
+
+- name: Compose message for establishing the Dynatrace Server's Performance Warehouse connection
+  set_fact: 
+    dynatrace_server_set_pwh_connection_message:
+      host: "{{ dynatrace_server_pwh_connection_hostname }}"
+      port: "{{ dynatrace_server_pwh_connection_port }}"
+      dbms: "{{ dynatrace_server_pwh_connection_dbms }}"
+      dbname: "{{ dynatrace_server_pwh_connection_database }}"
+      user: "{{ dynatrace_server_pwh_connection_username }}"
+      password: "{{ dynatrace_server_pwh_connection_password }}"
+      usessl: false
+      useurl: false
+      url: null
+
+- name: Establish the Dynatrace Server's Performance Warehouse connection
+  shell: "curl --fail --silent --write-out '\n%{http_code}' --request PUT --user admin:admin --header 'Content-Type: application/json' --data '{{ dynatrace_server_set_pwh_connection_message | to_json }}' http://localhost:8020/rest/management/pwhconnection/config | cut -d'\n' -f 2"
+  register: dynatrace_server_set_pwh_connection_response
+  failed_when: dynatrace_server_set_pwh_connection_response.stdout != '200'
