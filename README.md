@@ -22,11 +22,6 @@ Download the Dynatrace (full) installer from [downloads.dynatrace.com](downloads
 
 As defined in ```defaults/main.yml```:
 
-dynatrace_server_linux_installer_file_url: http://localhost/dynatrace/dynatrace.jar
-dynatrace_server_fixpack_file_url: http://localhost/dynatrace/dynatrace-fixpack.dtf
-dynatrace_server_license_file_url: http://localhost/dynatrace/dynatrace-license.key
-
-
 | Name                                          | Default                                          | Description |
 |-----------------------------------------------|--------------------------------------------------|-------------|
 | *dynatrace_server_linux_install_dir*          | /opt                                             | The Dynatrace Server will be installed into the directory *$dynatrace_server_linux_install_dir*/dynatrace-*$major*-*$minor*-*$rev*, where *$major*, *$minor* and *$rev* are given by the installer. A symbolic link to the actual installation directory will be created in *$dynatrace_server_linux_install_dir*/dynatrace. |
@@ -60,6 +55,23 @@ dynatrace_server_license_file_url: http://localhost/dynatrace/dynatrace-license.
 	    - role: dynatrace.Dynatrace-Server
 	      dynatrace_server_linux_service_names: [dynaTraceServer, dynaTraceCollector, dynaTraceWebServerAgent]
 	      dynatrace_server_do_pwh_connection: yes
+
+## Testing
+
+We use [Test Kitchen](http://kitchen.ci) to automatically test our automated deployments with [Serverspec](http://serverspec.org):
+
+1) Install Kitchen and its dependencies from within the project's directory:
+
+```
+gem install bundler
+bundle install
+```
+
+2) Run tests
+
+```
+kitchen test
+```
 
 ## Additional Resources
 
