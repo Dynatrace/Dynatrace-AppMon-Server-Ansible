@@ -1,0 +1,25 @@
+---
+- hosts: test-kitchen
+  roles:
+  - role: ANXS.postgresql
+    postgresql_databases:
+    - name: dynatrace-pwh
+    postgresql_users:
+    - name: dynatrace
+      pass: dynatrace
+      encrypted: no
+    postgresql_user_privileges:
+    - name: dynatrace
+      db: dynatrace-pwh
+  sudo: yes
+
+- hosts: test-kitchen
+  roles:
+  - role: dynatrace.Dynatrace-Server
+    dynatrace_server_fixpack_file_url: http://10.0.2.2/dynatrace/dynatrace-fixpack.dtf
+    dynatrace_server_license_file_url: http://10.0.2.2/dynatrace/dynatrace-license.key
+    dynatrace_server_linux_installer_file_url: http://10.0.2.2/dynatrace/dynatrace.jar
+    dynatrace_server_linux_service_names: [dynaTraceServer, dynaTraceCollector, dynaTraceWebServerAgent]
+    dynatrace_server_do_pwh_connection: yes
+    dynatrace_server_pwh_connection_database: dynatrace-pwh
+  

@@ -1,0 +1,22 @@
+---
+provisioner:
+  name: ansible_playbook
+  hosts: test-kitchen
+  require_ansible_repo: true
+  ansible_verbose: false
+  ansible_verbosity: 2
+  requirements_path: requirements.yml
+
+driver:
+  name: vagrant
+  customize:
+    cpus: 2
+    memory: 2048
+    cpuexecutioncap: 50
+
+platforms:
+  # Opscode vagrant box names taken from http://www.vagrantbox.es/
+  - name: ubuntu-12.04
+
+suites:
+  - name: default
