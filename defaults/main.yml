@@ -13,6 +13,10 @@ dynatrace_server_collector_port: 6698
 dynatrace_server_collector_agent_port: 9998
 dynatrace_server_collector_server_hostname: localhost
 dynatrace_server_collector_server_port: 6698
+dynatrace_server_collector_jvm_xms:
+dynatrace_server_collector_jvm_xmx:
+dynatrace_server_collector_jvm_perm_size:
+dynatrace_server_collector_jvm_max_perm_size: 
 
 dynatrace_server_wsagent_name: dtwsagent
 dynatrace_server_wsagent_collector_hostname: localhost
