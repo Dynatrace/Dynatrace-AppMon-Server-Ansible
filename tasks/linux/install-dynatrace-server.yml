@@ -47,7 +47,22 @@
   file: path="{{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_linux_installer_file_name }}" state=absent
   sudo: yes
 
-- include: install-dynatrace-server-initd-scripts.yml
+- name: Compute the Dynatrace Collector's start runlevels for Ubuntu and Debian based distros
+  set_fact:
+    linux_service_start_runlevels="2 3 4 5"
+    linux_service_stop_runlevels="0 1 6"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Compute the Dynatrace Collector's start runlevels for CentOS and Red Hat based distros
+  set_fact:
+    linux_service_start_runlevels="3 5"
+    linux_service_stop_runlevels="0 1 2 6"
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Make the '{{ item }}' init script available in /etc/init.d
+  template: src=../../templates/linux/init.d/{{ item }}.j2 dest=/etc/init.d/{{ item }} owner=root group=root mode=0755
+  with_items: dynatrace_server_linux_service_names
+  sudo: yes
 
 - name: Configure the name in the Dynatrace Web Server Agent's 'dtwsagent.ini' file
   lineinfile: dest={{ dynatrace_server_linux_install_dir }}/dynatrace/agent/conf/dtwsagent.ini regexp='^Name .*' line='Name {{ dynatrace_server_wsagent_name }}'
@@ -62,8 +77,12 @@
   with_items: dynatrace_server_linux_service_names
   sudo: yes
 
-- name: Wait for the Dynatrace Server to become available via port 8020
-  wait_for: port=8020 state=present
+- name: Wait for the Dynatrace Server to become available via port 8021
+  wait_for: port=8021 state=present
+  sudo: yes
+
+- name: Wait for the Dynatrace Server to become available via port 9998
+  wait_for: port=9998 state=present
   sudo: yes
 
 - name: Sleep for 5 seconds...
