@@ -18,5 +18,3 @@
 
 - name: Establish the Dynatrace Server's Performance Warehouse connection
   shell: "curl --fail --silent --write-out '\n%{http_code}' --request PUT --user admin:admin --header 'Content-Type: application/json' --data '{{ dynatrace_server_set_pwh_connection_message | to_json }}' http://localhost:8020/rest/management/pwhconnection/config | cut -d'\n' -f 2"
-  register: dynatrace_server_set_pwh_connection_response
-  failed_when: dynatrace_server_set_pwh_connection_response.stdout != '200'
