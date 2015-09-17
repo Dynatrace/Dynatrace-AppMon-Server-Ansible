@@ -57,7 +57,7 @@
   set_fact:
     linux_service_start_runlevels="3 5"
     linux_service_stop_runlevels="0 1 2 6"
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
 - name: Make the '{{ item }}' init script available in /etc/init.d
   template: src=../../templates/linux/init.d/{{ item }}.j2 dest=/etc/init.d/{{ item }} owner=root group=root mode=0755
