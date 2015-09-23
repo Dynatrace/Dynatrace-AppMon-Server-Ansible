@@ -1,7 +1,7 @@
 ---
 dynatrace_server_linux_install_dir: /opt
 dynatrace_server_linux_installer_file_name: dynatrace.jar
-dynatrace_server_linux_installer_file_url: http://localhost/dynatrace/dynatrace.jar
+dynatrace_server_linux_installer_file_url: http://downloads.dynatracesaas.com/6.2/dynatrace-linux-x64.jar
 dynatrace_server_linux_service_names: [dynaTraceServer]
 
 dynatrace_server_fixpack_file_name: dynatrace-fixpack.dtf
