@@ -1,0 +1,15 @@
+---
+- name: Copy the Dynatrace update file to /tmp
+  copy: src="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_update_file_name }}" dest="/tmp/{{ dynatrace_server_update_file_name }}"
+
+- name: Wait for the Dynatrace Server to become available via port 8020
+  wait_for: port=8020 state=present
+  sudo: yes
+
+- name: Install the Dynatrace update
+  shell: curl --fail --silent --write-out %{http_code} --user admin:admin --form "file=@/tmp/{{ dynatrace_server_update_file_name }}" http://localhost:8020/rest/management/installjobs
+  register: dynatrace_update_install
+  failed_when: dynatrace_update_install.stdout != '201'
+
+- name: Remove the Dynatrace update
+  file: path="/tmp/{{ dynatrace_server_update_file_name }}" state=absent

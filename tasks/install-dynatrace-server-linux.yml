@@ -13,14 +13,14 @@
   fail: msg="The Dynatrace Server installer is not provided at {{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }} and could not be downloaded from {{ dynatrace_server_linux_installer_file_url }}."
   when: (not dynatrace_server_installer_file_provided.stat.exists) and (dynatrace_server_installer_url_provided.failed is defined and dynatrace_server_installer_url_provided.failed)
 
-- name: Check if a Dynatrace Fixpack is provided locally
-  local_action: stat path="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_fixpack_file_name }}"
-  register: dynatrace_server_fixpack_file_provided
+- name: Check if a Dynatrace Update is provided locally
+  local_action: stat path="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_update_file_name }}"
+  register: dynatrace_server_update_file_provided
 
-- name: Check if the Dynatrace Fixpack is provided by URL
-  local_action: get_url url="{{ dynatrace_server_fixpack_file_url }}" dest="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_fixpack_file_name }}" force=yes
-  when: not dynatrace_server_fixpack_file_provided.stat.exists
-  register: dynatrace_server_fixpack_url_provided
+- name: Check if the Dynatrace Update is provided by URL
+  local_action: get_url url="{{ dynatrace_server_update_file_url }}" dest="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_update_file_name }}" force=yes
+  when: not dynatrace_server_update_file_provided.stat.exists
+  register: dynatrace_server_update_url_provided
   ignore_errors: true
 
 - name: Check if a Dynatrace License is provided locally
@@ -44,8 +44,8 @@
 - include: linux/install-dynatrace-license.yml
   when: (dynatrace_server_license_file_provided.stat.exists) or (dynatrace_server_license_url_provided.failed is not defined)
 
-- include: linux/install-dynatrace-fixpack.yml
-  when: (dynatrace_server_fixpack_file_provided.stat.exists) or (dynatrace_server_fixpack_url_provided.failed is not defined)
+- include: linux/install-dynatrace-update.yml
+  when: (dynatrace_server_update_file_provided.stat.exists) or (dynatrace_server_update_url_provided.failed is not defined)
 
 - include: install-dynatrace-pwh-connection.yml
   when: dynatrace_server_do_pwh_connection

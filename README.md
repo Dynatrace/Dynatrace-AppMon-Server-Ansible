@@ -1,6 +1,6 @@
 # Dynatrace-Server-Ansible
 
-An [Ansible](http://www.ansible.com) role for automated deployments of the [Dynatrace](http://bit.ly/dttrial) Server.
+This Ansible role installs and configures the Dynatrace Server of the [Dynatrace Application Monitoring](http://www.dynatrace.com/en/products/application-monitoring.html) solution.
 
 ## Download
 
@@ -9,14 +9,14 @@ The role is available via:
 - [Ansible Galaxy](https://galaxy.ansible.com/list#/roles/2623)
 - [GitHub](https://github.com/Dynatrace/Dynatrace-Server-Ansible)
 
-## Requirements
+## Description
 
-Download the Dynatrace (full) installer from [downloads.dynatrace.com](downloads.dynatrace.com) and place the artifact as ```dynatrace.jar``` in the role's ```files/linux``` directory from where it will be picked up during the automated installation. Alternatively, you can make the Dynatrace installer available at an HTTP, HTTPS or FTP resource and point the installation script to the right location, see below.
+This role downloads and installs the most recent version of the Dynatrace Server from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `dynatrace_server_linux_installer_file_url` attribute. Alternatively, you can place the installer artifact as `dynatrace.jar` in the role's `files` directory from where it will be picked up during the installation. Please refer to `defaults/main.yml` for a list of supported attributes.
 
 ## Optional
 
-- Download a Dynatrace Fixpack from [downloads.dynatrace.com](downloads.dynatrace.com) and place the artifact as ```dynatrace-fixpack.dtf``` in the role's ```files``` directory. Alternatively, you can make the Dynatrace Fixpack available at an HTTP, HTTPS or FTP resource and point the installation script to the right location, see below.
-- Place the Dynatrace License as ```dynatrace-license.key``` in the role's ```files``` directory. Alternatively, you can make the Dynatrace License available at an HTTP, HTTPS or FTP resource and point the installation script to the right location, see below. **You can obtain a free trial license for Dynatrace from [bit.ly/dttrial](http://bit.ly/dttrial).**
+- Download a Dynatrace Update from [downloads.dynatracesaas.com](downloads.dynatracesaas.com) and place the artifact as ```dynatrace-update.dtf``` in the role's ```files``` directory from where it will be picked up during the installation. Alternatively, you can make the Dynatrace Update available at an HTTP, HTTPS or FTP resource and point the installation script to the right location via the `dynatrace_server_update_file_url` attribute, see below.
+- Place the Dynatrace License as ```dynatrace-license.key``` in the role's ```files``` directory from where it will be picked up during the installation. Alternatively, you can make the Dynatrace License available at an HTTP, HTTPS or FTP resource and point the installation script to the right location via the `dynatrace_server_license_file_url` attribute, see below.
 
 ## Role Variables
 
@@ -28,8 +28,8 @@ As defined in ```defaults/main.yml```:
 | *dynatrace_server_linux_installer_file_name*  | dynatrace.jar                                    | The file name of the Dynatrace installer in the role's ```files``` directory. |
 | *dynatrace_server_linux_installer_file_url*   | http://downloads.dynatracesaas.com/6.2/dynatrace-linux-x64.jar | A HTTP, HTTPS or FTP URL to the Dynatrace installer in the form (http\|https\|ftp)://[user[:pass]]@host.domain[:port]/path. |
 | *dynatrace_server_linux_service_names*        | [dynaTraceServer]                                | The full installer installs the Dynatrace Server, Collector and Agents. However, by default only ```dynaTraceServer``` will run as a service. You can control which services shall be made available upon startup by specifying any of ```dynaTraceServer```, ```dynaTraceCollector``` or ```dynaTraceWebServerAgent``` in this list, as seen in the example below. |
-| *dynatrace_server_fixpack_file_name*          | dynatrace-fixpack.dtf                            | The file name of the Dynatrace Fixpack in the role's ```files``` directory. |
-| *dynatrace_server_fixpack_file_url*           | http://localhost/dynatrace/dynatrace-fixpack.dtf | A HTTP, HTTPS or FTP URL to the Dynatrace Fixpack in the form (http\|https\|ftp)://[user[:pass]]@host.domain[:port]/path. |
+| *dynatrace_server_update_file_name*           | dynatrace-update.dtf                             | The file name of the Dynatrace Update in the role's ```files``` directory. |
+| *dynatrace_server_update_file_url*            | http://localhost/dynatrace/dynatrace-update.dtf  | A HTTP, HTTPS or FTP URL to the Dynatrace Update in the form (http\|https\|ftp)://[user[:pass]]@host.domain[:port]/path. |
 | *dynatrace_server_license_file_name*          | dynatrace-license.key                            | The file name of the Dynatrace License in the role's ```files``` directory. |
 | *dynatrace_server_license_file_url*           | http://localhost/dynatrace/dynatrace-license.key | A HTTP, HTTPS or FTP URL to the Dynatrace License in the form (http\|https\|ftp)://[user[:pass]]@host.domain[:port]/path. |
 | *dynatrace_server_collector_port*             | 6698                                             | The port where the Server service (if enabled via *$dynatrace_server_linux_service_names*) shall listen for Collectors. Use either ```6698``` (non-SSL) or ```6699``` (SSL). |
@@ -50,41 +50,52 @@ As defined in ```defaults/main.yml```:
 
 ## Example Playbook
 
-	- hosts: all
-	  roles:
-	    - role: dynatrace.Dynatrace-Server
-	      dynatrace_server_linux_service_names: [dynaTraceServer, dynaTraceCollector, dynaTraceWebServerAgent]
-	      dynatrace_server_do_pwh_connection: yes
+```
+- hosts: all
+  roles:
+    - role: dynatrace.Dynatrace-Server
+      dynatrace_server_linux_service_names: [dynaTraceServer, dynaTraceCollector, dynaTraceWebServerAgent]
+      dynatrace_server_do_pwh_connection: yes
+```
 
 ## Testing
 
-We use [Test Kitchen](http://kitchen.ci) to automatically test our automated deployments with [Serverspec](http://serverspec.org):
+We use [Test Kitchen](http://kitchen.ci) to automatically test our automated deployments with [Serverspec](http://serverspec.org) and [RSpec](http://rspec.info/):
 
-1) Install Kitchen and its dependencies from within the project's directory:
+1) Install Test Kitchen and its dependencies from within the project's directory:
 
 ```
 gem install bundler
 bundle install
 ```
 
-2) Run tests
+2) Run all tests
 
 ```
 kitchen test
 ```
 
+By default, we run our tests inside [Docker](https://www.docker.com/) containers as this considerably speeds up testing time (see `.kitchen.yml`).
+
 ## Additional Resources
 
-- [Blog: How to Automate Enterprise Application Monitoring with Ansible](http://apmblog.dynatrace.com/2015/03/04/how-to-automate-enterprise-application-monitoring-with-ansible/)
-- [Blog: How to Automate Enterprise Application Monitoring with Ansible - Part II](http://apmblog.dynatrace.com/2015/04/23/how-to-automate-enterprise-application-monitoring-with-ansible-part-ii/)
-- [Slide Deck: Automated Deployments](http://slideshare.net/MartinEtmajer/automated-deployments-slide-share)
-- [Slide Deck: Automated Deployments (of Dynatrace) with Ansible](http://www.slideshare.net/MartinEtmajer/automated-deployments-with-ansible)
-- [Slide Deck: Testing Ansible Roles with Test Kitchen, Serverspec and RSpec](http://www.slideshare.net/MartinEtmajer/testing-ansible-roles-with-test-kitchen-serverspec-and-rspec-48185017)
-- [Tutorials: Automated Deployments (of Dynatrace) with Ansible](https://community.compuwareapm.com/community/display/LEARN/Tutorials+on+Automated+Deployments#TutorialsonAutomatedDeployments-ansible)
+### Blogs
+
+- [How to Automate Enterprise Application Monitoring with Ansible](http://apmblog.dynatrace.com/2015/03/04/how-to-automate-enterprise-application-monitoring-with-ansible/)
+- [How to Automate Enterprise Application Monitoring with Ansible - Part II](http://apmblog.dynatrace.com/2015/04/23/how-to-automate-enterprise-application-monitoring-with-ansible-part-ii/)
+
+### Presentations
+
+- [Automated Deployments (of Dynatrace) with Ansible](http://www.slideshare.net/MartinEtmajer/automated-deployments-with-ansible)
+- [Test-Driven Infrastructure with Ansible, Test Kitchen, Serverspec and RSpec](http://www.slideshare.net/MartinEtmajer/testing-ansible-roles-with-test-kitchen-serverspec-and-rspec-48185017)
+
+### Tutorials
+
+- [Automated Deployments (of Dynatrace) with Ansible](https://community.compuwareapm.com/community/display/LEARN/Tutorials+on+Automated+Deployments#TutorialsonAutomatedDeployments-ansible)
 
 ## Questions?
 
-Feel free to post your questions on the Dynatrace Community's [Continuous Delivery Forum](https://community.dynatrace.com/community/pages/viewpage.action?pageId=46628921).
+Feel free to post your questions on the Dynatrace Community's [Continuous Delivery Forum](https://answers.dynatrace.com/spaces/148/open-q-a_2.html?topics=continuous%20delivery).
 
 ## License
 

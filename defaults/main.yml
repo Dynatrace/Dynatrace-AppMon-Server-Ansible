@@ -4,8 +4,8 @@ dynatrace_server_linux_installer_file_name: dynatrace.jar
 dynatrace_server_linux_installer_file_url: http://downloads.dynatracesaas.com/6.2/dynatrace-linux-x64.jar
 dynatrace_server_linux_service_names: [dynaTraceServer]
 
-dynatrace_server_fixpack_file_name: dynatrace-fixpack.dtf
-dynatrace_server_fixpack_file_url: http://localhost/dynatrace/dynatrace-fixpack.dtf
+dynatrace_server_update_file_name: dynatrace-update.dtf
+dynatrace_server_update_file_url: http://localhost/dynatrace/dynatrace-update.dtf
 dynatrace_server_license_file_name: dynatrace-license.key
 dynatrace_server_license_file_url: http://localhost/dynatrace/dynatrace-license.key
 
