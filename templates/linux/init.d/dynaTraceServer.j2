@@ -69,9 +69,9 @@ if [ -z "$PROCESSPID" ]; then
 	RPID=$(ps -C $DT_BINARY -o pid --no-headers | awk '{printf "%s|", $0}' | awk '{sub(/\|$/,""); printf $0}')
 	if [ ! -z "$RPID" ]; then
 		if [ -z "$DT_INSTANCE" ]; then
-			PROCESSPID=$(ps -ef | grep -v "instance" | grep $DT_BINARY | awk '\{\{print $2\}\}' | grep -E $RPID)
+			PROCESSPID=$(ps -ef | grep -v "instance" | grep $DT_BINARY | awk {{ "'{{print $2}}'" }} | grep -E $RPID)
 		else
-			PROCESSPID=$(ps -ef | grep $DT_BINARY | grep " $DT_INSTANCE " | awk '\{\{print $2\}\}' | grep -E $RPID)
+			PROCESSPID=$(ps -ef | grep $DT_BINARY | grep " $DT_INSTANCE " | awk {{ "'{{print $2}}'" }} | grep -E $RPID)
 		fi
 	fi
 fi
@@ -79,9 +79,9 @@ if [ -z "$FE_PROCESSPID" ]; then
 	FE_RPID=$(ps -C $DT_FE_BINARY -o pid --no-headers | awk '{printf "%s|", $0}' | awk '{sub(/\|$/,""); printf $0}')
 	if [ ! -z "$FE_RPID" ]; then
 		if [ -z "$DT_FE_INSTANCE" ]; then
-			FE_PROCESSPID=$(ps -ef | grep -v "instance" | grep $DT_FE_BINARY | awk '\{\{print $2\}\}' | grep -E $FE_RPID)
+			FE_PROCESSPID=$(ps -ef | grep -v "instance" | grep $DT_FE_BINARY | awk {{ "'{{print $2}}'" }} | grep -E $FE_RPID)
 		else
-			FE_PROCESSPID=$(ps -ef | grep $DT_FE_BINARY | grep " $DT_FE_INSTANCE " | awk '\{\{print $2\}\}' | grep -E $FE_RPID)
+			FE_PROCESSPID=$(ps -ef | grep $DT_FE_BINARY | grep " $DT_FE_INSTANCE " | awk {{ "'{{print $2}}'" }} | grep -E $FE_RPID)
 		fi	
 	fi
 fi

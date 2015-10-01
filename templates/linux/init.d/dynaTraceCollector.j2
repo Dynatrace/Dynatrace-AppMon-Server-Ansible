@@ -46,9 +46,9 @@ fi
 if [ -z "$PROCESSPID" ]; then
   GREPARG=`echo $DT_BINARY | cut -c1-8`
   if [ -z "$DT_INSTANCE" ]; then
-    PROCESSPID=`ps -e | grep $GREPARG | awk '\{\{print $1\}\}'`
+    PROCESSPID=`ps -e | grep $GREPARG | awk {{ "'{{print $1}}'" }}`
   else
-    PROCESSPID=`ps -ef | grep $GREPARG | grep $DT_INSTANCE | awk '\{\{print $2\}\}'`
+    PROCESSPID=`ps -ef | grep $GREPARG | grep $DT_INSTANCE | awk {{ "'{{print $2}}'" }}`
   fi
 fi
 
