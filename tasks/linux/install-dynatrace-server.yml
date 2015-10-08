@@ -19,8 +19,16 @@
   sudo: yes
   ignore_errors: yes
 
-- name: Sleep for 5 seconds...
-  pause: seconds=5
+- name: Wait for the Dynatrace Server to become unavailable via port {{ item }}
+  wait_for: port={{ item }} state=stopped
+  with_items: [ "{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
+  sudo: yes
+
+- name: Wait for the Dynatrace Collector to become unavailable via port {{ item }}
+  wait_for: port={{ item }} state=stopped
+  with_items: ["{{ dynatrace_server_collector_agent_port }}"]
+  sudo: yes
+  when: "'dynaTraceCollector' in {{ dynatrace_server_linux_service_names }}"
 
 - name: Install Dynatrace
   shell: yes | java -jar {{ dynatrace_server_linux_installer_file_name }} chdir={{ dynatrace_server_linux_install_dir }}
@@ -77,13 +85,13 @@
   with_items: dynatrace_server_linux_service_names
   sudo: yes
 
-- name: Wait for the Dynatrace Server to become available via port 8021
-  wait_for: port=8021 state=present
+- name: Wait for the Dynatrace Server to become available via port {{ item }}
+  wait_for: port={{ item }} state=started
+  with_items: ["{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
   sudo: yes
 
-- name: Wait for the Dynatrace Server to become available via port 9998
-  wait_for: port=9998 state=present
+- name: Wait for the Dynatrace Collector to become available via port {{ item }}
+  wait_for: port={{ item }} state=started
+  with_items: ["{{ dynatrace_server_collector_agent_port }}"]
   sudo: yes
-
-- name: Sleep for 5 seconds...
-  pause: seconds=5
+  when: "'dynaTraceCollector' in dynatrace_server_linux_service_names"
