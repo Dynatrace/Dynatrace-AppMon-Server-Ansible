@@ -23,7 +23,7 @@
 # - DT_OPTARGS  optional arguments (e.g. -vm, -instance, -server, etc.)
 # - DT_INSTANCE instance name if -instance argument is specified
 DT_HOME={{ dynatrace_server_linux_install_dir }}/dynatrace
-DT_OPTARGS="-listen {{ dynatrace_server_collector_agent_port }} -server {{ dynatrace_server_collector_server_hostname }}:{{ dynatrace_server_collector_server_port }}{% if dynatrace_server_collector_jvm_xms is defined %} -Xms{{ dynatrace_server_collector_jvm_xms }}{% endif %}{% if dynatrace_server_collector_jvm_xmx is defined %} -Xmx{{ dynatrace_server_collector_jvm_xmx }}{% endif %}{% if dynatrace_server_collector_jvm_perm_size is defined %} -XX:PermSize={{ dynatrace_server_collector_jvm_perm_size }}{% endif %}{% if dynatrace_server_collector_jvm_max_perm_size is defined %} -XX:MaxPermSize={{ dynatrace_server_collector_jvm_max_perm_size }}{% endif %}"
+DT_OPTARGS="-listen {{ dynatrace_server_collector_agent_port }} -server {{ dynatrace_server_collector_server_hostname }}:{{ dynatrace_server_collector_server_port }}{% if dynatrace_server_collector_jvm_xms %} -Xms{{ dynatrace_server_collector_jvm_xms }}{% endif %}{% if dynatrace_server_collector_jvm_xmx %} -Xmx{{ dynatrace_server_collector_jvm_xmx }}{% endif %}{% if dynatrace_server_collector_jvm_perm_size %} -XX:PermSize={{ dynatrace_server_collector_jvm_perm_size }}{% endif %}{% if dynatrace_server_collector_jvm_max_perm_size %} -XX:MaxPermSize={{ dynatrace_server_collector_jvm_max_perm_size }}{% endif %}"
 # When using an instance name, ensure that the -instance argument from
 # DT_OPTARGS is in sync with the following DT_INSTANCE variable:
 # (e.g.: "-instance InstName" requires "DT_INSTANCE=InstName")
