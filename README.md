@@ -46,14 +46,14 @@ As defined in ```defaults/main.yml```:
 | *dynatrace_server_pwh_connection_database*    | dynatrace                                        |             |
 | *dynatrace_server_pwh_connection_username*    | dynatrace                                        |             |
 | *dynatrace_server_pwh_connection_password*    | dynatrace                                        |             |
-| *dynatrace_server_role_name*                  | dynatrace.Dynatrace-Server                       | The actual name of this role in an [Ansible Playbook's](http://docs.ansible.com/playbooks.html) ```roles``` directory. |
+| *dynatrace_server_role_name*                  | Dynatrace.Dynatrace-Server                       | The actual name of this role in an [Ansible Playbook's](http://docs.ansible.com/playbooks.html) ```roles``` directory. |
 
 ## Example Playbook
 
 ```
 - hosts: all
   roles:
-    - role: dynatrace.Dynatrace-Server
+    - role: Dynatrace.Dynatrace-Server
       dynatrace_server_linux_service_names: [dynaTraceServer, dynaTraceCollector, dynaTraceWebServerAgent]
       dynatrace_server_do_pwh_connection: yes
 ```

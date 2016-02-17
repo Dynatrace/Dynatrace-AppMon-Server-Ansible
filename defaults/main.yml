@@ -30,4 +30,4 @@ dynatrace_server_pwh_connection_database: dynatrace
 dynatrace_server_pwh_connection_username: dynatrace
 dynatrace_server_pwh_connection_password: dynatrace
 
-dynatrace_server_role_name: dynatrace.Dynatrace-Server
+dynatrace_server_role_name: Dynatrace.Dynatrace-Server

@@ -1,7 +1,7 @@
 ---
 - hosts: test-kitchen
   roles:
-  - role: dynatrace.Dynatrace-Server
+  - role: Dynatrace.Dynatrace-Server
     dynatrace_server_linux_installer_file_url: http://10.0.2.2/dynatrace/dynatrace.jar
     dynatrace_server_linux_service_names: [dynaTraceServer, dynaTraceCollector, dynaTraceWebServerAgent]
     dynatrace_server_update_file_url: http://10.0.2.2/dynatrace/dynatrace-update.dtf
