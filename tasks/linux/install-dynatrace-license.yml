@@ -6,4 +6,4 @@
     owner: "{{ dynatrace_server_owner }}"
     group: "{{ dynatrace_server_group }}"
     mode: 0600
-  sudo: yes
+  become: yes

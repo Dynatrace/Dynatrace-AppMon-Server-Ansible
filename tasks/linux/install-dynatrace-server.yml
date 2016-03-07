@@ -4,7 +4,7 @@
     path: "{{ dynatrace_server_linux_install_dir }}"
     state: directory
   register: dynatrace_server_create_install_dir_result
-  sudo: yes
+  become: yes
 
 - name: Change ownership of the installation directory if it had to be created
   file:
@@ -12,13 +12,13 @@
     owner: "{{ dynatrace_server_owner }}"
     group: "{{ dynatrace_server_group }}"
   when: dynatrace_server_create_install_dir_result | changed
-  sudo: yes
+  become: yes
 
 - name: "Copy the Dynatrace installer to {{ dynatrace_server_linux_install_dir }}"
   copy:
     src: "{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }}"
     dest: "{{ dynatrace_server_linux_install_dir }}"
-  sudo: yes
+  become: yes
 
 - name: Copy the Dynatrace Server installer script to /tmp
   template:
@@ -31,25 +31,25 @@
     state: stopped
     enabled: no
   ignore_errors: yes
-  sudo: yes
+  become: yes
 
 - name: "Wait for the Dynatrace Server to become unavailable via port {{ item }}"
   wait_for:
     port: "{{ item }}"
     state: stopped
   with_items: [ "{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
-  sudo: yes
+  become: yes
 
 - name: Install the Dynatrace Collector
   shell: /bin/bash /tmp/run-dynatrace-server-installer.sh
-  sudo: yes
+  become: yes
 
 - name: Gather the name of the Dynatrace version installation directory
   shell: find . -maxdepth 1 -name dynatrace-\* -type d -printf '%T@ %p\n' | sort -k 1nr | cut -d' ' -f2 | head -1
   args:
     chdir: "{{ dynatrace_server_linux_install_dir }}"
   register: dynatrace_server_installed_version_dir
-  sudo: yes
+  become: yes
 
 - name: Change ownership of the installation directory
   file:
@@ -58,13 +58,13 @@
     group: "{{ dynatrace_server_group }}"
     state: directory
     recurse: yes
-  sudo: yes
+  become: yes
 
 - name: Change mode of the installation directory
   file:
     path: "{{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }}"
     mode: 0755
-  sudo: yes
+  become: yes
 
 - name: "Create a symlink of the actual installation directory to {{ dynatrace_server_linux_install_dir }}/dynatrace"
   file:
@@ -74,13 +74,13 @@
     group: "{{ dynatrace_server_group }}"
     mode: 0755
     state: link
-  sudo: yes
+  become: yes
 
 - name: Remove the Dynatrace installer
   file:
     path: "{{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_linux_installer_file_name }}"
     state: absent
-  sudo: yes
+  become: yes
 
 - name: Compute the Dynatrace Server's start runlevels for Ubuntu and Debian based distros
   set_fact:
@@ -101,7 +101,7 @@
     owner: root
     group: root
     mode: 0755
-  sudo: yes
+  become: yes
 
 - name: Enable and start Dynatrace services
   service:
@@ -109,11 +109,11 @@
     state: restarted
     sleep: 5
     enabled: yes
-  sudo: yes
+  become: yes
 
 - name: "Wait for the Dynatrace Server to become available via port {{ item }}"
   wait_for:
     port: "{{ item }}"
     state: started
   with_items: ["{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
-  sudo: yes
+  become: yes

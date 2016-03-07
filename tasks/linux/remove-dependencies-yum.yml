@@ -5,7 +5,7 @@
     state: absent
   ignore_errors: yes
   when: not curl_install | skipped
-  sudo: yes
+  become: yes
 
 - name: Remove package 'java-1.7.0-openjdk'
   yum:
@@ -13,4 +13,4 @@
     state: absent
   ignore_errors: yes
   when: not java_install | skipped
-  sudo: yes
+  become: yes
