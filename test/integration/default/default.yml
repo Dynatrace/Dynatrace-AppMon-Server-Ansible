@@ -4,7 +4,7 @@
   - role: Dynatrace.Dynatrace-Server
     dynatrace_server_linux_installer_file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-server.jar
     dynatrace_server_update_file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-update.dtf
-    dynatrace_server_license_file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-license.key
+    dynatrace_server_license_file_url: http://10.0.2.2/dynatrace/dynatrace-license.key
     dynatrace_server_do_pwh_connection: yes
     dynatrace_server_pwh_connection_database: dynatrace-pwh
   
