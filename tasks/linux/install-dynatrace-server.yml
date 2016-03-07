@@ -5,7 +5,7 @@
   sudo: yes
 
 - name: Change ownership of the installation directory if it had to be created
-  file: path="{{ dynatrace_server_linux_install_dir }}" owner=dynatrace group=dynatrace
+  file: path="{{ dynatrace_server_linux_install_dir }}" owner="{{ dynatrace_server_owner }}" group="{{ dynatrace_server_group }}"
   when: dynatrace_server_create_install_dir_result|changed
   sudo: yes
 
@@ -38,7 +38,7 @@
   sudo: yes
 
 - name: Change ownership of the installation directory
-  file: path={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} owner=dynatrace group=dynatrace state=directory recurse=yes
+  file: path={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} owner="{{ dynatrace_server_owner }}" group="{{ dynatrace_server_group }}" state=directory recurse=yes
   sudo: yes
 
 - name: Change mode of the installation directory
@@ -46,7 +46,7 @@
   sudo: yes
 
 - name: Create a symlink of the actual installation directory to {{ dynatrace_server_linux_install_dir }}/dynatrace
-  file: src={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} dest={{ dynatrace_server_linux_install_dir }}/dynatrace owner=dynatrace group=dynatrace mode=0755 state=link
+  file: src={{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_installed_version_dir.stdout }} dest={{ dynatrace_server_linux_install_dir }}/dynatrace owner="{{ dynatrace_server_owner }}" group="{{ dynatrace_server_group }}" mode=0755 state=link
   sudo: yes
 
 - name: Remove the Dynatrace installer
