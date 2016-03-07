@@ -103,7 +103,7 @@
     mode: 0755
   become: yes
 
-- name: Enable and start Dynatrace services
+- name: Enable and start Dynatrace Server services
   service:
     name: dynaTraceServer
     state: restarted
