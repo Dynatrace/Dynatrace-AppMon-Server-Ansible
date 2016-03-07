@@ -32,22 +32,6 @@ describe file ('/etc/init.d/dynaTraceServer') do
   its(:content) { should match /^.*su - dynatrace -c.*$/ }
 end
 
-describe file ('/etc/init.d/dynaTraceWebServerAgent') do
-  it { should be_owned_by 'root' }
-  it { should be_grouped_into 'root' }
-
-  if os[:family] == 'debian' || os[:family] == 'ubuntu'
-    its(:content) { should match /^\# Default-Start: 2 3 4 5$/ }
-    its(:content) { should match /^\# Default-Stop: 0 1 6$/ }
-  elsif os[:family] == 'redhat'
-    its(:content) { should match /^\# Default-Start: 3 5$/ }
-    its(:content) { should match /^\# Default-Stop: 0 1 2 6$/ }
-  end
-
-  its(:content) { should match /^DT_HOME=\/opt\/dynatrace$/ }
-  its(:content) { should match /^.*su - dynatrace -c.*$/ }
-end
-
 describe process('dtfrontendserver') do
   it { should be_running }
   its(:user) { should eq 'dynatrace' }
