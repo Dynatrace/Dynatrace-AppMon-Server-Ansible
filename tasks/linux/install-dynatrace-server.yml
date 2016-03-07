@@ -40,7 +40,7 @@
   with_items: [ "{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
   become: yes
 
-- name: Install the Dynatrace Collector
+- name: Install the Dynatrace Server
   shell: /bin/bash /tmp/run-dynatrace-server-installer.sh
   become: yes
 
