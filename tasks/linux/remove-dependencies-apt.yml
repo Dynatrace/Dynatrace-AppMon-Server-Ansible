@@ -1,12 +1,16 @@
 ---
 - name: Remove package 'curl'
-  apt: name=curl state=absent
-  when: not curl_install|skipped
+  apt:
+    name: curl
+    state: absent
   ignore_errors: yes
+  when: not curl_install | skipped
   sudo: yes
 
-- name: Remove package 'default-jre'
-  apt: pkg=default-jre state=absent
-  when: not java_install|skipped
+- name: Remove package 'default-jre-headless'
+  apt:
+    pkg: default-jre-headless
+    state: absent
   ignore_errors: yes
+  when: not java_install | skipped
   sudo: yes

@@ -1,37 +1,56 @@
 ---
 - name: Check if the Dynatrace Server installer is provided locally
-  local_action: stat path="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }}"
+  local_action:
+    module: stat
+    path: "{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }}"
   register: dynatrace_server_installer_file_provided
 
 - name: Check if the Dynatrace Server installer is provided by URL
-  local_action: get_url url="{{ dynatrace_server_linux_installer_file_url }}" dest="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }}" force=yes
-  when: not dynatrace_server_installer_file_provided.stat.exists
+  local_action:
+    module: get_url
+    url: "{{ dynatrace_server_linux_installer_file_url }}"
+    dest: "{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }}"
+    force: yes
   register: dynatrace_server_installer_url_provided
   ignore_errors: true
+  when: not dynatrace_server_installer_file_provided.stat.exists
 
 - name: Fail if the Dynatrace Server installer is not provided
-  fail: msg="The Dynatrace Server installer is not provided at {{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }} and could not be downloaded from {{ dynatrace_server_linux_installer_file_url }}."
+  fail:
+    msg: "The Dynatrace Server installer is not provided at {{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }} and could not be downloaded from {{ dynatrace_server_linux_installer_file_url }}."
   when: (not dynatrace_server_installer_file_provided.stat.exists) and (dynatrace_server_installer_url_provided.failed is defined and dynatrace_server_installer_url_provided.failed)
 
 - name: Check if a Dynatrace Update is provided locally
-  local_action: stat path="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_update_file_name }}"
+  local_action:
+    module: stat
+    path: "{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_update_file_name }}"
   register: dynatrace_server_update_file_provided
 
 - name: Check if the Dynatrace Update is provided by URL
-  local_action: get_url url="{{ dynatrace_server_update_file_url }}" dest="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_update_file_name }}" force=yes
-  when: not dynatrace_server_update_file_provided.stat.exists
+  local_action:
+    module: get_url
+    url: "{{ dynatrace_server_update_file_url }}"
+    dest: "{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_update_file_name }}"
+    force: yes
   register: dynatrace_server_update_url_provided
   ignore_errors: true
+  when: not dynatrace_server_update_file_provided.stat.exists
 
 - name: Check if a Dynatrace License is provided locally
-  local_action: stat path="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_license_file_name }}"
+  local_action:
+    module: stat
+    path: "{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_license_file_name }}"
   register: dynatrace_server_license_file_provided
 
 - name: Check if the Dynatrace License is provided by URL
-  local_action: get_url url="{{ dynatrace_server_license_file_url }}" dest="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_license_file_name }}" force=yes
-  when: not dynatrace_server_license_file_provided.stat.exists
+  local_action:
+    module: get_url
+    url: "{{ dynatrace_server_license_file_url }}"
+    dest: "{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_license_file_name }}"
+    force: yes
   register: dynatrace_server_license_url_provided
   ignore_errors: true
+  when: not dynatrace_server_license_file_provided.stat.exists
 
 - include: linux/install-dependencies-apt.yml
   when: ansible_pkg_mgr == "apt"

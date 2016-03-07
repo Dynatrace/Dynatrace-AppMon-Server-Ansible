@@ -1,6 +1,8 @@
 ---
 - name: Wait for the Dynatrace Server to become available via port 8020
-  wait_for: port=8020 state=present
+  wait_for:
+    port: 8020
+    state: present
   sudo: yes
 
 - name: Compose message for establishing the Dynatrace Server's Performance Warehouse connection
