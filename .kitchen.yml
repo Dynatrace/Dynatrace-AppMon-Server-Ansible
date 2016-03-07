@@ -12,13 +12,19 @@ driver:
 platforms:
   - name: centos-6
     driver_config:
-      image: dynatrace/centos-testing:6
+      provision_command:
+        - yum update -y
+        - yum install -y net-tools tar
   - name: debian-7.8
     driver_config:
-      image: dynatrace/debian-testing:7.8
+      provision_command:
+        - apt-get update
+        - apt-get install -y net-tools tar
   - name: ubuntu-12.04
     driver_config:
-      image: dynatrace/ubuntu-testing:12.04
+      provision_command:
+        - apt-get update
+        - apt-get install -y net-tools tar
 
 suites:
   - name: default
