@@ -2,14 +2,9 @@
 - hosts: test-kitchen
   roles:
   - role: Dynatrace.Dynatrace-Server
-    dynatrace_server_linux_installer_file_url: http://10.0.2.2/dynatrace/dynatrace.jar
-    dynatrace_server_linux_service_names: [dynaTraceServer, dynaTraceCollector, dynaTraceWebServerAgent]
-    dynatrace_server_update_file_url: http://10.0.2.2/dynatrace/dynatrace-update.dtf
-    dynatrace_server_license_file_url: http://10.0.2.2/dynatrace/dynatrace-license.key
-    dynatrace_server_collector_jvm_xms: 256M
-    dynatrace_server_collector_jvm_xmx: 1024M
-    dynatrace_server_collector_jvm_perm_size: 256m
-    dynatrace_server_collector_jvm_max_perm_size: 384m
+    dynatrace_server_linux_installer_file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-server.jar
+    dynatrace_server_update_file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-update.dtf
+    dynatrace_server_license_file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-license.key
     dynatrace_server_do_pwh_connection: yes
     dynatrace_server_pwh_connection_database: dynatrace-pwh
   

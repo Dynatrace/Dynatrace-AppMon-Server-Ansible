@@ -13,9 +13,13 @@
   copy: src="{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/linux/{{ dynatrace_server_linux_installer_file_name }}" dest="{{ dynatrace_server_linux_install_dir }}"
   sudo: yes
 
+- name: Copy the Dynatrace Server installer script to /tmp
+  template:
+    src: templates/linux/run-dynatrace-server-installer.sh.j2
+    dest: /tmp/run-dynatrace-server-installer.sh
+
 - name: Stop and disable running Dynatrace services
-  service: name='{{ item }}' state=stopped enabled=no
-  with_items: dynatrace_server_linux_service_names
+  service: name=dynaTraceServer state=stopped enabled=no
   sudo: yes
   ignore_errors: yes
 
@@ -24,14 +28,8 @@
   with_items: [ "{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
   sudo: yes
 
-- name: Wait for the Dynatrace Collector to become unavailable via port {{ item }}
-  wait_for: port={{ item }} state=stopped
-  with_items: ["{{ dynatrace_server_collector_agent_port }}"]
-  sudo: yes
-  when: "'dynaTraceCollector' in {{ dynatrace_server_linux_service_names }}"
-
-- name: Install Dynatrace
-  shell: yes | java -jar {{ dynatrace_server_linux_installer_file_name }} chdir={{ dynatrace_server_linux_install_dir }}
+- name: Install the Dynatrace Collector
+  shell: /bin/bash /tmp/run-dynatrace-server-installer.sh
   sudo: yes
 
 - name: Gather the name of the Dynatrace version installation directory
@@ -55,43 +53,27 @@
   file: path="{{ dynatrace_server_linux_install_dir }}/{{ dynatrace_server_linux_installer_file_name }}" state=absent
   sudo: yes
 
-- name: Compute the Dynatrace Collector's start runlevels for Ubuntu and Debian based distros
+- name: Compute the Dynatrace Server's start runlevels for Ubuntu and Debian based distros
   set_fact:
     linux_service_start_runlevels="2 3 4 5"
     linux_service_stop_runlevels="0 1 6"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Compute the Dynatrace Collector's start runlevels for CentOS and Red Hat based distros
+- name: Compute the Dynatrace Server's start runlevels for CentOS and Red Hat based distros
   set_fact:
     linux_service_start_runlevels="3 5"
     linux_service_stop_runlevels="0 1 2 6"
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
-- name: Make the '{{ item }}' init script available in /etc/init.d
-  template: src=../../templates/linux/init.d/{{ item }}.j2 dest=/etc/init.d/{{ item }} owner=root group=root mode=0755
-  with_items: dynatrace_server_linux_service_names
-  sudo: yes
-
-- name: Configure the name in the Dynatrace Web Server Agent's 'dtwsagent.ini' file
-  lineinfile: dest={{ dynatrace_server_linux_install_dir }}/dynatrace/agent/conf/dtwsagent.ini regexp='^Name .*' line='Name {{ dynatrace_server_wsagent_name }}'
-  sudo: yes
-
-- name: Configure the Dynatrace Collector host in the Dynatrace Web Server Agent's dtwsagent.ini' file
-  lineinfile: dest={{ dynatrace_server_linux_install_dir }}/dynatrace/agent/conf/dtwsagent.ini regexp='^Server .*' line='Server {{ dynatrace_server_wsagent_collector_hostname }}:{{ dynatrace_server_wsagent_collector_port }}'
+- name: Make the 'dynaTraceServer' init script available in /etc/init.d
+  template: src=templates/linux/init.d/dynaTraceServer.j2 dest=/etc/init.d/dynaTraceServer owner=root group=root mode=0755
   sudo: yes
 
 - name: Enable and start Dynatrace services
-  service: name='{{ item }}' state=restarted sleep=5 enabled=yes
-  with_items: dynatrace_server_linux_service_names
+  service: name=dynaTraceServer state=restarted sleep=5 enabled=yes
   sudo: yes
 
 - name: Wait for the Dynatrace Server to become available via port {{ item }}
   wait_for: port={{ item }} state=started
   with_items: ["{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
   sudo: yes
-
-- name: Wait for the Dynatrace Collector to become available via port {{ item }}
-  wait_for: port={{ item }} state=started
-  with_items: ["{{ dynatrace_server_collector_agent_port }}"]
-  sudo: yes
-  when: "'dynaTraceCollector' in dynatrace_server_linux_service_names"
