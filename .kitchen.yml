@@ -4,7 +4,6 @@ provisioner:
   hosts: test-kitchen
   require_ansible_repo: false
   require_ansible_omnibus: true
-  requirements_path: requirements.yml
 
 driver:
   name: docker
