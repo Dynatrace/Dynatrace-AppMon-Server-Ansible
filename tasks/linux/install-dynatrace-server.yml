@@ -82,17 +82,17 @@
     state: absent
   become: yes
 
-- name: Compute the Dynatrace Server's start runlevels for Ubuntu and Debian based distros
+- name: Compute the Dynatrace Server's start runlevels for Debian based distros
   set_fact:
     linux_service_start_runlevels="2 3 4 5"
     linux_service_stop_runlevels="0 1 6"
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_os_family == 'Debian'
 
-- name: Compute the Dynatrace Server's start runlevels for CentOS and Red Hat based distros
+- name: Compute the Dynatrace Server's start runlevels for Red Hat based distros
   set_fact:
     linux_service_start_runlevels="3 5"
     linux_service_stop_runlevels="0 1 2 6"
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+  when: ansible_os_family == 'RedHat'
 
 - name: Make the 'dynaTraceServer' init script available in /etc/init.d
   template:
