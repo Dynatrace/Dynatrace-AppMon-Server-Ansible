@@ -11,12 +11,7 @@ The role is available via:
 
 ## Description
 
-This role downloads and installs the most recent version of the Dynatrace Server from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `dynatrace_server_linux_installer_file_url` attribute. Alternatively, you can place the installer artifact as `dynatrace-server.jar` in the role's `files` directory from where it will be picked up during the installation. Please refer to `defaults/main.yml` for a list of supported attributes.
-
-## Optional
-
-- Download a Dynatrace Update from [downloads.dynatracesaas.com](downloads.dynatracesaas.com) and place the artifact as ```dynatrace-update.dtf``` in the role's ```files``` directory from where it will be picked up during the installation. Alternatively, you can make the Dynatrace Update available at an HTTP, HTTPS or FTP resource and point the installation script to the right location via the `dynatrace_server_update_file_url` attribute, see below.
-- Place the Dynatrace License as ```dynatrace-license.key``` in the role's ```files``` directory from where it will be picked up during the installation. Alternatively, you can make the Dynatrace License available at an HTTP, HTTPS or FTP resource and point the installation script to the right location via the `dynatrace_server_license_file_url` attribute, see below.
+This role downloads and installs the most recent version of the Dynatrace Server from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). Alternatively, you can place the installer artifact as `dynatrace-server-linux-x86.jar` in the role's `files` directory from where it will be picked up during the installation. The default file name and URL can be overridden via the `dynatrace_server_linux_installer_file_name` and `dynatrace_server_linux_installer_file_url` attributes, respectively. Please refer to `defaults/main.yml` for a list of supported attributes.
 
 ## Role Variables
 
@@ -25,12 +20,8 @@ As defined in ```defaults/main.yml```:
 | Name                                          | Default                                                               | Description
 |-----------------------------------------------|-----------------------------------------------------------------------|------------
 | *dynatrace_server_linux_install_dir*          | /opt                                                                  | The Dynatrace Server will be installed into the directory *$dynatrace_server_linux_install_dir*/dynatrace-*$major*-*$minor*-*$rev*, where *$major*, *$minor* and *$rev* are given by the installer. A symbolic link to the actual installation directory will be created in *$dynatrace_server_linux_install_dir*/dynatrace.
-| *dynatrace_server_linux_installer_file_name*  | dynatrace-server.jar                                                  | The file name of the Dynatrace installer in the role's ```files``` directory.
+| *dynatrace_server_linux_installer_file_name*  | dynatrace-server-linux-x86.jar                                        | The file name of the Dynatrace installer in the role's ```files``` directory.
 | *dynatrace_server_linux_installer_file_url*   | http://downloads.dynatracesaas.com/6.3/dynatrace-server-linux-x86.jar | A HTTP, HTTPS or FTP URL to the Dynatrace installer in the form (http\|https\|ftp)://[user[:pass]]@host.domain[:port]/path.
-| *dynatrace_server_update_file_name*           | dynatrace-update.dtf                                                  | The file name of the Dynatrace Update in the role's ```files``` directory.
-| *dynatrace_server_update_file_url*            | http://localhost/dynatrace/dynatrace-update.dtf                       | A HTTP, HTTPS or FTP URL to the Dynatrace Update in the form (http\|https\|ftp)://[user[:pass]]@host.domain[:port]/path.
-| *dynatrace_server_license_file_name*          | dynatrace-license.key                                                 | The file name of the Dynatrace License in the role's ```files``` directory.
-| *dynatrace_server_license_file_url*           | http://localhost/dynatrace/dynatrace-license.key                      | A HTTP, HTTPS or FTP URL to the Dynatrace License in the form (http\|https\|ftp)://[user[:pass]]@host.domain[:port]/path.
 | *dynatrace_server_collector_port*             | 6698                                                                  | The port where the server shall listen for Collectors. Use either ```6698``` (non-SSL) or ```6699``` (SSL).
 | *dynatrace_server_do_pwh_connection*          | no                                                                    | Whether a connection to an existing Performance Warehouse (database) shall be established, or not. **Note**: requires Dynatrace >= v6.2.
 | *dynatrace_server_pwh_connection_hostname*    | localhost                                                             |

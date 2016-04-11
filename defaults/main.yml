@@ -2,13 +2,8 @@
 dynatrace_server_installer_bitsize: 64
 
 dynatrace_server_linux_install_dir: /opt
-dynatrace_server_linux_installer_file_name: dynatrace-server.jar
-dynatrace_server_linux_installer_file_url: http://downloads.dynatracesaas.com/6.3/dynatrace-server-linux-x86.jar
-
-dynatrace_server_update_file_name: dynatrace-update.dtf
-dynatrace_server_update_file_url: http://localhost/dynatrace/dynatrace-update.dtf
-dynatrace_server_license_file_name: dynatrace-license.key
-dynatrace_server_license_file_url: http://localhost/dynatrace/dynatrace-license.key
+dynatrace_server_linux_installer_file_name: dynatrace-server-linux-x86.jar
+dynatrace_server_linux_installer_file_url: "http://downloads.dynatracesaas.com/6.3/{{ dynatrace_server_linux_installer_file_name }}"
 
 dynatrace_server_collector_port: 6698
 

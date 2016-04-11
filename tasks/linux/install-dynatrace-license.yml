@@ -1,9 +1,0 @@
----
-- name: Install the Dynatrace license
-  copy:
-    src: "{{ playbook_dir }}/roles/{{ dynatrace_server_role_name }}/files/{{ dynatrace_server_license_file_name }}"
-    dest: "{{ dynatrace_server_linux_install_dir }}/dynatrace/server/conf/dtlicense.key"
-    owner: "{{ dynatrace_server_owner }}"
-    group: "{{ dynatrace_server_group }}"
-    mode: 0600
-  become: yes
