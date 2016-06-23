@@ -19,4 +19,4 @@
       url: null
 
 - name: Establish the Dynatrace Server's Performance Warehouse connection
-  shell: "curl --fail --silent --write-out '\n%{http_code}' --request PUT --user admin:admin --header 'Content-Type: application/json' --data '{{ dynatrace_server_set_pwh_connection_message | to_json }}' http://localhost:8020/rest/management/pwhconnection/config | cut -d'\n' -f 2"
+  shell: "curl -k --fail --silent --write-out '\n%{http_code}' --request PUT --user admin:admin --header 'Content-Type: application/json' --data '{{ dynatrace_server_set_pwh_connection_message | to_json }}' https://localhost:8021/rest/management/pwhconnection/config | cut -d'\n' -f 2"
