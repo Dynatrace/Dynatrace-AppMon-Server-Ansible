@@ -19,4 +19,13 @@
       url: null
 
 - name: Establish the Dynatrace Server's Performance Warehouse connection
-  shell: "curl -k --fail --silent --write-out '\n%{http_code}' --request PUT --user admin:admin --header 'Content-Type: application/json' --data '{{ dynatrace_server_set_pwh_connection_message | to_json }}' https://localhost:8021/rest/management/pwhconnection/config | cut -d'\n' -f 2"
+  uri:
+    url: "{{ dynatrace_server_pwh_url }}"
+    method: PUT
+    user: "{{ dynatrace_server_user }}"
+    password: "{{ dynatrace_server_password }}"
+    body: "{{ dynatrace_server_set_pwh_connection_message | to_json }}"
+    force_basic_auth: yes
+    body_format: json
+    validate_certs: no
+  ignore_errors: yes

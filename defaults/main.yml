@@ -19,3 +19,7 @@ dynatrace_server_owner: dynatrace
 dynatrace_server_group: dynatrace
 
 dynatrace_server_role_name: Dynatrace.Dynatrace-Server
+
+dynatrace_server_pwh_url: https://localhost:8021/rest/management/pwhconnection/config.json
+dynatrace_server_user: "admin"
+dynatrace_server_password: "admin"
