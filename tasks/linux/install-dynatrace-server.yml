@@ -118,6 +118,7 @@
     sleep: 5
     enabled: yes
   become: yes
+  when: dynatrace_server_services_do_startup
 
 - name: "Wait for the Dynatrace Server to become available via port {{ item }}"
   wait_for:
@@ -125,3 +126,4 @@
     state: started
   with_items: ["{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
   become: yes
+  when: dynatrace_server_services_do_startup
