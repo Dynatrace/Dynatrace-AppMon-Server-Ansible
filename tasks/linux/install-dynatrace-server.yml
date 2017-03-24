@@ -45,7 +45,7 @@
   wait_for:
     port: "{{ item }}"
     state: stopped
-  with_items: [ "{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
+  with_items: [ 2021, 6699, 8021, 9911]
   become: yes
 
 - name: Install the Dynatrace Server
@@ -124,6 +124,7 @@
   wait_for:
     port: "{{ item }}"
     state: started
-  with_items: ["{{ dynatrace_server_collector_port }}", 2021, 6699, 8021, 9911]
+    timeout: 480
+  with_items: [2021, 6699, 8021, 9911]
   become: yes
   when: dynatrace_server_services_do_startup

@@ -28,7 +28,7 @@
 # - DT_FE_INSTANCE instance name - requires port offset in DT_FE_OPTARGS, must be equal to DT_INSTANCE
 
 DT_HOME={{ dynatrace_server_linux_install_dir }}/dynatrace
-DT_OPTARGS="-listen {{ dynatrace_server_collector_port }}"
+DT_OPTARGS="-listen {{ dynatrace_server_agent_listen_port }}"
 DT_FE_OPTARGS=
 
 DT_INSTANCE=

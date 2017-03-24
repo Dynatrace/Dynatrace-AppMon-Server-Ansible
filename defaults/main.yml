@@ -5,7 +5,7 @@ dynatrace_server_linux_install_dir: /opt
 dynatrace_server_linux_installer_file_name: dynatrace-server-6.5.0.1289-linux-x86.jar
 dynatrace_server_linux_installer_file_url: "https://files.dynatrace.com/downloads/OnPrem/dynaTrace/6.5/6.5.0.1289/{{ dynatrace_server_linux_installer_file_name }}"
 
-dynatrace_server_collector_port: 6699
+dynatrace_server_agent_listen_port: 9998
 
 dynatrace_server_services_do_startup: yes
 
