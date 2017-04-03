@@ -22,7 +22,7 @@ As defined in ```defaults/main.yml```:
 | *dynatrace_server_linux_install_dir*          | /opt                                                                  | The Dynatrace Server will be installed into the directory *$dynatrace_server_linux_install_dir*/dynatrace-*$major*-*$minor*-*$rev*, where *$major*, *$minor* and *$rev* are given by the installer. A symbolic link to the actual installation directory will be created in *$dynatrace_server_linux_install_dir*/dynatrace.
 | *dynatrace_server_linux_installer_file_name*  | dynatrace-server-6.5.0.1289-linux-x86.jar                             | The file name of the Dynatrace installer in the role's ```files``` directory.
 | *dynatrace_server_linux_installer_file_url*   | https://files.dynatrace.com/downloads/OnPrem/dynaTrace/6.5/6.5.0.1289/dynatrace-server-6.5.0.1289-linux-x86.jar | A HTTP, HTTPS or FTP URL to the Dynatrace installer in the form (http\|https\|ftp)://[user[:pass]]@host.domain[:port]/path.
-| dynatrace_server_agent_listen_port*           | 9998                                                                 | The port where the server shall listen for Collectors. Use either ```6698``` (non-SSL) or ```6699``` (SSL).
+| dynatrace_server_agent_listen_port*           | 9998                                                                  | The port where the server shall listen for Agents.
 | *dynatrace_server_do_pwh_connection*          | no                                                                    | Whether a connection to an existing Performance Warehouse (database) shall be established, or not. **Note**: requires Dynatrace >= v6.2.
 | *dynatrace_server_pwh_connection_hostname*    | localhost                                                             |
 | *dynatrace_server_pwh_connection_port*        | 5432                                                                  |
@@ -33,6 +33,7 @@ As defined in ```defaults/main.yml```:
 | *dynatrace_server_owner*                      | dynatrace                                                             | The system user that owns the Dynatrace installation.
 | *dynatrace_server_group*                      | dynatrace                                                             | The system user's group that owns the Dynatrace installation.
 | *dynatrace_server_role_name*                  | Dynatrace.Dynatrace-Server                                            | The actual name of this role in an [Ansible Playbook's](http://docs.ansible.com/playbooks.html) ```roles``` directory.
+| *dynatrace_session_storage_directory*         | sessions/stored                                                       | Sessions will be stored in the directory (whole path to the directory: {{dynatrace_server_linux_install_dir}}/dynatrace/server/{{dynatrace_session_storage_directory}}) 
 
 ## Example Playbook
 
