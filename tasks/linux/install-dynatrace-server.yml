@@ -48,7 +48,7 @@
   ignore_errors: yes
   become: yes
 
-- name: "Wait for the Dynatrace Server to become unavailable via port {{ item }}"
+- name: "Wait for the Dynatrace Server to become unavailable via ports [2021, 6699, 8021, 9911]"
   wait_for:
     port: "{{ item }}"
     state: stopped
@@ -127,7 +127,7 @@
   become: yes
   when: dynatrace_server_services_do_startup
 
-- name: "Wait for the Dynatrace Server to become available via port {{ item }}"
+- name: "Wait for the Dynatrace Server to become available via ports [2021, 6699, 8021, 9911]"
   wait_for:
     port: "{{ item }}"
     state: started
@@ -164,7 +164,7 @@
     - dynatrace_server_services_do_startup
     - session_storage.changed
 
-- name: "Wait for the Dynatrace Server to become available via port {{ item }}"
+- name: "Wait for the Dynatrace Server to become available via ports [2021, 6699, 8021, 9911]"
   wait_for:
     port: "{{ item }}"
     state: started

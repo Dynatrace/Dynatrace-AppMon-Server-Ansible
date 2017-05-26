@@ -1,7 +1,7 @@
 ---
-- name: Wait for the Dynatrace Server to become available via port 8020
+- name: Wait for the Dynatrace Server to become available via port 8021
   wait_for:
-    port: 8020
+    port: 8021
     state: present
   become: yes
 

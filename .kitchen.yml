@@ -4,9 +4,13 @@ provisioner:
   hosts: test-kitchen
   require_ansible_repo: false
   require_ansible_omnibus: true
+  ansible_omnibus_url: https://raw.githubusercontent.com/neillturner/omnibus-ansible/d185d6849ac275e544614ab01bbb55b0cabbef8c/ansible_install.sh
+  require_chef_omnibus: 13.0.118
 
 driver:
   name: docker
+  # In case of error "Message: You must first install the Docker CLI tool" try uncommenting following line
+  use_sudo: false
 
 platforms:
   - name: centos-6

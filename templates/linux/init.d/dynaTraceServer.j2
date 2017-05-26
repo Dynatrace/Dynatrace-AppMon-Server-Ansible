@@ -1,14 +1,13 @@
 #!/bin/sh
-### Start/Stop dynaTrace Server daemon
-### Start/Stop dynaTrace Backend Server daemon
-### Start/Stop dynaTrace Frontend Server daemon
+### Start/Stop Dynatrace Server daemon
+### Start/Stop Dynatrace Backend Server daemon
+### Start/Stop Dynatrace Frontend Server daemon
 #
-# Copyright 2004-2012 dynaTrace Software
+# Copyright 2004-2016 Dynatrace Software
 # All rights reserved.
 #
 # Copy this script to /etc/init.d and use chkconfig for enabling/disabling
-# the daemon. In order to run multiple Servers/Collectors on the same host,
-# further adjustments may be necessary.
+# the daemon. Depending on the target environment adjustments may be necessary.
 #
 ### BEGIN INIT INFO
 # Provides: dynaTraceServer
@@ -21,18 +20,14 @@
 ### END INIT INFO
 
 # To use this file in your environment, adjusting the following variables:
-# - DT_HOME     installation directory of dynaTrace software
-# - DT_OPTARGS  optional arguments (e.g. -vm, -instance, -server, etc.)
-# - DT_FE_OPTARGS  optional arguments for the frontend server(e.g. -vm, -server, etc.)
-# - DT_INSTANCE instance name - requires port offset in DT_OPTARGS, must be equal to DT_FE_INSTANCE
-# - DT_FE_INSTANCE instance name - requires port offset in DT_FE_OPTARGS, must be equal to DT_INSTANCE
+# - DT_HOME     installation directory of Dynatrace software
+# - DT_OPTARGS  optional arguments (e.g. -vm, -server, etc.)
+# - DT_FE_OPTARGS  	optional arguments for the frontend server(e.g. -vm, -server, etc.)
+# - DT_RUNASUSER	the user to run the Dynatrace process
 
 DT_HOME={{ dynatrace_server_linux_install_dir }}/dynatrace
 DT_OPTARGS="-listen {{ dynatrace_server_agent_listen_port }}"
 DT_FE_OPTARGS=
-
-DT_INSTANCE=
-DT_FE_INSTANCE=
 
 DT_FE_PRODUCT=FrontendServer
 DT_FE_BINARY=dtfrontendserver
@@ -40,150 +35,196 @@ DT_FE_BINARY=dtfrontendserver
 DT_PRODUCT=Server
 DT_BINARY=dtserver
 
-DT_PIDFILE="/var/run/${DT_BINARY}.pid"
-DT_FE_PIDFILE="/var/run/${DT_FE_BINARY}.pid"
+DT_RUNASUSER={{ dynatrace_server_owner }}
 
-if [ -n "$DT_INSTANCE" ]; then
-  DT_PIDFILE=/var/run/"${DT_BINARY}.${DT_INSTANCE}.pid"
-fi
-if [ -n "$DT_FE_INSTANCE" ]; then
-  DT_FE_PIDFILE=/var/run/"${DT_FE_BINARY}.${DT_FE_INSTANCE}.pid"
-fi
+# How long to wait for shutdown
+DT_SHUTDOWN_WAIT=60
+
+DT_PIDFILE_DIR="${DT_HOME}/server"
+
+DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}70.pid
+
+DT_FE_PIDFILE=${DT_PIDFILE_DIR}/${DT_FE_BINARY}70.pid
 
 if [ ! -x "${DT_HOME}/${DT_BINARY}" ]; then
-  echo "File not found or not executable: $DT_HOME/$DT_BINARY"
+  echo "File not found or not executable: ${DT_HOME}/${DT_BINARY}"
   exit 1
 fi
 if [ ! -x "${DT_HOME}/${DT_FE_BINARY}" ]; then
-  echo "File not found or not executable: $DT_HOME/$DT_FE_BINARY"
+  echo "File not found or not executable: ${DT_HOME}/${DT_FE_BINARY}"
   exit 1
 fi
 
-if [ -f "$DT_PIDFILE" ]; then
-  PROCESSPID=$(cat $DT_PIDFILE)
+if [ -f "${DT_PIDFILE}" ]; then
+  PROCESSPID=$(cat ${DT_PIDFILE})
+  ps -p ${PROCESSPID} > /dev/null
+  if [ $? -ne 0 ]; then
+    PROCESSPID=""
+    if [ -f ${DT_PIDFILE} ]; then
+      rm -f ${DT_PIDFILE}
+    fi
+  fi
 fi
-if [ -f "$DT_FE_PIDFILE" ]; then
-  FE_PROCESSPID=$(cat $DT_FE_PIDFILE)
+if [ -f "${DT_FE_PIDFILE}" ]; then
+  FE_PROCESSPID=$(cat ${DT_FE_PIDFILE})
+  ps -p ${FE_PROCESSPID} > /dev/null
+  if [ $? -ne 0 ]; then
+    FE_PROCESSPID=""
+    if [ -f ${DT_FR_PIDFILE} ]; then
+      rm -f ${DT_FR_PIDFILE}
+    fi
+  fi
+
 fi
-if [ -z "$PROCESSPID" ]; then
-	RPID=$(ps -C $DT_BINARY -o pid --no-headers | awk '{printf "%s|", $0}' | awk '{sub(/\|$/,""); printf $0}')
-	if [ ! -z "$RPID" ]; then
-		if [ -z "$DT_INSTANCE" ]; then
-			PROCESSPID=$(ps -ef | grep -v "instance" | grep $DT_BINARY | awk {{ "'{{print $2}}'" }} | grep -E $RPID)
-		else
-			PROCESSPID=$(ps -ef | grep $DT_BINARY | grep " $DT_INSTANCE " | awk {{ "'{{print $2}}'" }} | grep -E $RPID)
+if [ -z "${PROCESSPID}" ]; then
+	PROCESSPID=$(ps -ef | grep -v "instance" | grep -v "grep" | grep -v "systemctl" | grep -v "screen" | grep ${DT_BINARY} | grep -v org.eclipse.equinox | awk '{% raw %}{{print $2}}{% endraw %}')
+fi
+if [ -z "${FE_PROCESSPID}" ]; then
+	DT_FE_BINARY_GREP=`echo ${DT_FE_BINARY} | cut -c1-8`
+	FE_PROCESSPID=$(ps -ef | grep -v "instance" | grep -v "grep" | grep -v "systemctl" | grep -v "screen" | grep ${DT_FE_BINARY} | grep -v org.eclipse.equinox | awk '{% raw %}{{print $2}}{% endraw %}')
+fi
+
+checkleftoverpid() {
+	if [ -n "$4" ] && ps -p $4 > /dev/null; then
+		echo "Dynatrace $1 daemon is already running!"
+		if [ -z ${3+x} ]; then
+			exit 0
+		fi
+	else
+		if [ -f $2 ]; then
+			rm -f $2
 		fi
 	fi
-fi
-if [ -z "$FE_PROCESSPID" ]; then
-	FE_RPID=$(ps -C $DT_FE_BINARY -o pid --no-headers | awk '{printf "%s|", $0}' | awk '{sub(/\|$/,""); printf $0}')
-	if [ ! -z "$FE_RPID" ]; then
-		if [ -z "$DT_FE_INSTANCE" ]; then
-			FE_PROCESSPID=$(ps -ef | grep -v "instance" | grep $DT_FE_BINARY | awk {{ "'{{print $2}}'" }} | grep -E $FE_RPID)
+}
+
+frontendstart() {
+	checkleftoverpid ${DT_FE_PRODUCT} ${DT_FE_PIDFILE} ${DT_DO_NOT_EXIT_IF_RUNNING} ${FE_PROCESSPID}
+	if [ -z "${FE_PROCESSPID}" ]; then
+		if [ -z "${DT_RUNASUSER}" ]; then
+			echo "${DT_HOME}"/${DT_FE_BINARY} -bg ${DT_FE_OPTARGS} -pidfile ${DT_FE_PIDFILE}
+			"${DT_HOME}"/${DT_FE_BINARY} -bg ${DT_FE_OPTARGS} -pidfile ${DT_FE_PIDFILE}
 		else
-			FE_PROCESSPID=$(ps -ef | grep $DT_FE_BINARY | grep " $DT_FE_INSTANCE " | awk {{ "'{{print $2}}'" }} | grep -E $FE_RPID)
-		fi	
-	fi
-fi
+			echo "${DT_HOME}"/${DT_FE_BINARY} -bg ${DT_FE_OPTARGS} -pidfile ${DT_FE_PIDFILE}
+			su -c "${DT_HOME}/${DT_FE_BINARY} -bg ${DT_FE_OPTARGS} -pidfile ${DT_FE_PIDFILE}" "${DT_RUNASUSER}"
+		fi
+    else
+		if [ -z ${DT_DO_NOT_EXIT_IF_RUNNING+x} ]; then
+			echo "Dynatrace ${DT_FE_PRODUCT} daemon is already running!"
+			exit 0
+		fi
+    fi
+}
+
+backendstart() {
+  checkleftoverpid ${DT_PRODUCT} ${DT_PIDFILE} ${DT_DO_NOT_EXIT_IF_RUNNING} ${PROCESSPID}
+  if [ -z "${PROCESSPID}" ]; then
+		if [ -z "${DT_RUNASUSER}" ]; then
+			echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
+			"${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
+		else
+			echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
+			su -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}" "${DT_RUNASUSER}"
+		fi
+    else
+		if [ -z ${DT_DO_NOT_EXIT_IF_RUNNING+x} ]; then
+			echo "Dynatrace ${DT_PRODUCT} daemon is already running!"
+			exit 0
+		fi
+    fi
+}
+
+frontendstop() {
+	if [ -n "${FE_PROCESSPID}" ]; then
+      echo "Terminating Dynatrace ${DT_FE_PRODUCT} process ${FE_PROCESSPID}"
+      kill -15 ${FE_PROCESSPID}
+	  COUNT=0;
+			while [ `ps -A -o pid | grep -c ${FE_PROCESSPID}` -gt 0 ] && [ "${COUNT}" -lt "${DT_SHUTDOWN_WAIT}" ] # `ps --pid ${FE_PROCESSPID} | grep -c ${FE_PROCESSPID}` -ne 0]
+			do
+				echo "Waiting for Dynatrace ${DT_FE_PRODUCT} (${FE_PROCESSPID}) to finish shutdown";
+				sleep 1
+				COUNT=`expr ${COUNT} + 1`
+			done
+
+			if [ "${COUNT}" -gt "${DT_SHUTDOWN_WAIT}" ]; then
+				echo "Killing Dynatrace ${DT_FE_PRODUCT} (${FE_PROCESSPID}) because the shutdown lasted longer than ${DT_SHUTDOWN_WAIT} seconds"
+				kill -9 ${FE_PROCESSPID}
+			fi
+		if [ -f "${DT_FE_PIDFILE}" ]; then
+			rm -f ${DT_FE_PIDFILE}
+		fi
+    fi
+}
+
+backendstop() {
+    if [ -n "${PROCESSPID}" ]; then
+      echo "Terminating Dynatrace ${DT_PRODUCT} process ${PROCESSPID}"
+      kill -15 ${PROCESSPID}
+	  COUNT=0;
+			while [ `ps -A -o pid | grep -c ${PROCESSPID}` -gt 0 ] && [ "${COUNT}" -lt "${DT_SHUTDOWN_WAIT}" ] # `ps --pid ${PROCESSPID} | grep -c ${PROCESSPID}` -ne 0]
+			do
+				echo "Waiting for Dynatrace $DT_PRODUCT (${PROCESSPID}) to finish shutdown";
+				sleep 1
+				COUNT=`expr ${COUNT} + 1`
+			done
+
+			if [ "${COUNT}" -gt "${DT_SHUTDOWN_WAIT}" ]; then
+				echo "Killing Dynatrace $DT_PRODUCT (${PROCESSPID}) because the shutdown lasted longer than ${DT_SHUTDOWN_WAIT} seconds"
+				kill -9 ${PROCESSPID}
+			fi
+		if [ -f "${DT_PIDFILE}" ]; then
+			rm -f ${DT_PIDFILE}
+		fi
+    fi
+}
 
 case "$1" in
 'start')
-  if [ -z "$PROCESSPID" ]; then
-		if [ -z "$DT_INSTANCE" ]; then
-			echo ${DT_HOME}/${DT_BINARY} -bg $DT_OPTARGS
-			su - dynatrace -c "${DT_HOME}/${DT_BINARY} -bg $DT_OPTARGS"
-		else
-			echo ${DT_HOME}/${DT_BINARY} -instance $DT_INSTANCE -bg $DT_OPTARGS
-			su - dynatrace -c "${DT_HOME}/${DT_BINARY} -instance $DT_INSTANCE -bg $DT_OPTARGS"
-		fi	  
-  else
-   echo "dynaTrace $DT_PRODUCT daemon is already running!"
-  fi
-	if [ -z "$FE_PROCESSPID" ]; then
-		if [ -z "$DT_FE_INSTANCE" ]; then
-			echo ${DT_HOME}/${DT_FE_BINARY} -bg $DT_FE_OPTARGS
-			su - dynatrace -c "${DT_HOME}/${DT_FE_BINARY} -bg $DT_FE_OPTARGS"
-		else 
-			echo ${DT_HOME}/${DT_FE_BINARY} -instance $DT_FE_INSTANCE -bg $DT_FE_OPTARGS
-			su - dynatrace -c "${DT_HOME}/${DT_FE_BINARY} -instance $DT_FE_INSTANCE -bg $DT_FE_OPTARGS"
-	  fi	
-  else
-   echo "dynaTrace $DT_FE_PRODUCT daemon is already running!"
-  fi
-  ;;
+	DT_DO_NOT_EXIT_IF_RUNNING="true"
+	backendstart
+	frontendstart
+	exit 0
+    ;;
 'start-frontend')
-	if [ -z "$FE_PROCESSPID" ]; then
-    if [ -z "$DT_FE_INSTANCE" ]; then
-			echo ${DT_HOME}/${DT_FE_BINARY} -bg $DT_FE_OPTARGS
-			su - dynatrace -c "${DT_HOME}/${DT_FE_BINARY} -bg $DT_FE_OPTARGS"
-		else 
-			echo ${DT_HOME}/${DT_FE_BINARY} -instance $DT_FE_INSTANCE -bg $DT_FE_OPTARGS
-			su - dynatrace -c "${DT_HOME}/${DT_FE_BINARY} -instance $DT_FE_INSTANCE -bg $DT_FE_OPTARGS"
-		fi	
-  else
-   echo "dynaTrace $DT_FE_PRODUCT daemon is already running!"
-  fi
-  ;;
+	frontendstart
+    ;;
 'start-backend')
-  if [ -z "$PROCESSPID" ]; then
-		if [ -z "$DT_INSTANCE" ]; then
-			echo ${DT_HOME}/${DT_BINARY} -bg $DT_OPTARGS
-			su - dynatrace -c "${DT_HOME}/${DT_BINARY} -bg $DT_OPTARGS"
-		else
-			echo ${DT_HOME}/${DT_BINARY} -instance $DT_INSTANCE -bg $DT_OPTARGS
-			su - dynatrace -c "${DT_HOME}/${DT_BINARY} -instance $DT_INSTANCE -bg $DT_OPTARGS"
-		fi	  
-  else
-   echo "dynaTrace $DT_PRODUCT daemon is already running!"
-  fi
-  ;;
+    backendstart
+    ;;
 'stop')
-  if [ -n "$PROCESSPID" ]; then
-    echo "Terminating dynaTrace $DT_PRODUCT process $PROCESSPID"
-    kill -15 $PROCESSPID
-  fi
-	if [ -n "$FE_PROCESSPID" ]; then
-    echo "Terminating dynaTrace $DT_FE_PRODUCT process $FE_PROCESSPID"
-    kill -15 $FE_PROCESSPID
-  fi
-  ;;
+	frontendstop
+	backendstop
+    ;;
 'stop-frontend')
-	if [ -n "$FE_PROCESSPID" ]; then
-    echo "Terminating dynaTrace $DT_FE_PRODUCT process $FE_PROCESSPID"
-    kill -15 $FE_PROCESSPID
-  fi
-  ;;
+	frontendstop
+    ;;
 'stop-backend')
-  if [ -n "$PROCESSPID" ]; then
-    echo "Terminating dynaTrace $DT_PRODUCT process $PROCESSPID"
-    kill -15 $PROCESSPID
-  fi
-  ;;
+    backendstop
+    ;;
 'version')
-  "$DT_HOME/$DT_BINARY" -v
-	"$DT_HOME/$DT_FE_BINARY" -v
-  ;;
+    "${DT_HOME}/${DT_BINARY}" -v
+	"${DT_HOME}/${DT_FE_BINARY}" -v
+    ;;
 'status')
-  if [ -n "$PROCESSPID" ]; then
-    echo "dynaTrace $DT_PRODUCT daemon is running:"
-    ps -ef | grep $DT_BINARY | grep $PROCESSPID
-      # | grep -v org.eclipse.equinox
-  else
-    echo "dynaTrace $DT_PRODUCT daemon not running."
-    exit 1
-  fi
-	if [ -n "$FE_PROCESSPID" ]; then
-    echo "dynaTrace $DT_FE_PRODUCT daemon is running:"
-    ps -ef | grep $DT_FE_BINARY | grep $FE_PROCESSPID
-      # | grep -v org.eclipse.equinox
-  else
-    echo "dynaTrace $DT_FE_PRODUCT daemon not running."
-    exit 1
-  fi	
-  ;;
+	checkleftoverpid ${DT_FE_PRODUCT} ${DT_FE_PIDFILE} ${FE_PROCESSPID}
+	checkleftoverpid ${DT_PRODUCT} ${DT_PIDFILE} ${PROCESSPID}
+    if [ -n "${PROCESSPID}" ]; then
+      echo "Dynatrace ${DT_PRODUCT} daemon is running:"
+      ps -ef | grep ${DT_BINARY} | grep ${PROCESSPID}
+        # | grep -v org.eclipse.equinox
+    else
+      echo "Dynatrace ${DT_PRODUCT} daemon not running."
+      exit 1
+    fi
+	if [ -n "${FE_PROCESSPID}" ]; then
+      echo "Dynatrace ${DT_FE_PRODUCT} daemon is running:"
+      ps -ef | grep ${DT_FE_BINARY} | grep ${FE_PROCESSPID}
+        # | grep -v org.eclipse.equinox
+    else
+      echo "Dynatrace ${DT_FE_PRODUCT} daemon not running."
+      exit 1
+    fi
+    ;;
 *)
-  echo "usage: $0 {start|start-frontend|start-backend|stop|stop-frontend|stop-backend|status|version|}"
-  ;;
+    echo "usage: $0 {start|start-frontend|start-backend|stop|stop-frontend|stop-backend|status|version|}"
+    ;;
 esac
-
-exit 0
