@@ -13,21 +13,30 @@ driver:
   use_sudo: false
 
 platforms:
-  - name: centos-6
+  - name: centos-7
     driver_config:
       provision_command:
         - yum update -y
         - yum install -y net-tools tar
-  - name: debian-7.8
+        - yum -y install initscripts
+        - yum install -y java-1.8.0-openjdk-devel
+  - name: debian-8.8
+    driver_config:
+      provision_command:
+        - apt-get update
+        - apt-get install -y net-tools tar wget
+        - echo "deb http://ftp.de.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
+        - apt-get update
+        - apt install -y -t jessie-backports  openjdk-8-jre-headless ca-certificates-java
+        - apt-get install openjdk-8-jdk -y
+
+  - name: ubuntu-16.04
     driver_config:
       provision_command:
         - apt-get update
         - apt-get install -y net-tools tar
-  - name: ubuntu-12.04
-    driver_config:
-      provision_command:
-        - apt-get update
-        - apt-get install -y net-tools tar
+        - export LC_ALL=C && curl -sSL https://raw.githubusercontent.com/neillturner/omnibus-ansible/d185d6849ac275e544614ab01bbb55b0cabbef8c/ansible_install.sh | sudo  bash
+        - apt-get install openjdk-8-jdk  -y
 
 suites:
   - name: default
