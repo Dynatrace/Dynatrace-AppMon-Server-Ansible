@@ -2,8 +2,8 @@
 dynatrace_server_installer_bitsize: 64
 
 dynatrace_server_linux_install_dir: /opt
-dynatrace_server_linux_installer_file_name: dynatrace-server-7.0.0.2449-linux-x86.jar
-dynatrace_server_linux_installer_file_url: "https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2449/{{ dynatrace_server_linux_installer_file_name }}"
+dynatrace_server_linux_installer_file_name: dynatrace-server-7.0.0.2469-linux-x86.jar
+dynatrace_server_linux_installer_file_url: "https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/{{ dynatrace_server_linux_installer_file_name }}"
 
 dynatrace_server_agent_listen_port: 9998
 
