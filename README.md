@@ -1,4 +1,4 @@
-# Dynatrace-Server-Ansible
+# Dynatrace-AppMon-Server-Ansible
 
 This Ansible role installs and configures the Dynatrace AppMon Server of the [Dynatrace AppMon](https://www.dynatrace.com/support/doc/appmon/) solution.
 
